@@ -43,7 +43,7 @@
             </MudSelect>
         </MudItem>
 
-        <MudItem xs="12" sm="6" md="5">
+        <MudItem xs="12" sm="6" md="4">
             @if (Condition.Property != null)
             {
                 <div style="position: relative;">
@@ -137,49 +137,19 @@
             }
         </MudItem>
 
-        <MudItem xs="12" sm="12" md="12" Class="d-flex align-center justify-end">
+        <MudItem xs="1" sm="1" md="1" Class="d-flex align-center justify-center">
             <MudTooltip Text="@L["FilterCondition_RemoveTooltip"]" Placement="Placement.Top">
-                <MudButton StartIcon="@Icons.Material.Filled.Delete"
-                           Color="Color.Error"
-                           Variant="Variant.Text"
-                           Size="Size.Small"
-                           OnClick="OnRemove"
-                           Disabled="@(!CanRemove)"
-                           aria-label="@L["FilterCondition_Remove"]">
-                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">@L["FilterCondition_RemoveShort"]</MudHidden>
-                    <MudHidden Breakpoint="Breakpoint.SmAndDown">@L["FilterCondition_Remove"]</MudHidden>
-                </MudButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               Size="Size.Small"
+                               OnClick="OnRemove"
+                               Disabled="@(!CanRemove)"
+                               aria-label="@L["FilterCondition_Remove"]" />
             </MudTooltip>
         </MudItem>
     </MudGrid>
 </MudPaper>
 
-<style>
-    .filter-row-paper {
-        transition: all 0.2s ease-in-out;
-        border: 1px solid var(--mud-palette-divider);
-        background-color: var(--mud-palette-surface);
-    }
-
-    .filter-row-paper:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        border-color: var(--mud-palette-primary);
-    }
-
-    .filter-row-paper.is-hovering {
-        transform: translateY(-1px);
-    }
-
-    /* Enhanced input focus states */
-    .mud-input-control:focus-within {
-        transition: all 0.2s ease-in-out;
-    }
-
-    /* Smooth checkbox toggle animation */
-    .mud-checkbox {
-        transition: all 0.2s ease-in-out;
-    }
-</style>
 
 @code {
     [Parameter]
@@ -201,12 +171,12 @@
 
     private string GetPaperClass()
     {
-        return IsHovering ? "filter-row-paper is-hovering pa-3 pa-sm-4" : "filter-row-paper pa-3 pa-sm-4";
+        return IsHovering ? "filter-row-paper is-hovering pa-2" : "filter-row-paper pa-2";
     }
 
     private string GetPaperStyle()
     {
-        return "margin-bottom: 12px;";
+        return "margin-bottom: 8px;";
     }
 
     private void OnMouseEnter()

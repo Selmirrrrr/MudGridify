@@ -5,28 +5,35 @@
     <MudStack Spacing="4">
         <MudStack Spacing="2">
             <div class="d-flex justify-space-between align-center flex-wrap" style="gap: 12px;">
+                <div class="d-flex align-center" style="gap: 8px;">
+                    <MudTooltip Text="@(IsExpanded ? L["FilterBuilder_Collapse"] : L["FilterBuilder_Expand"])" Placement="Placement.Top">
+                        <MudIconButton Icon="@(IsExpanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
+                                       Color="Color.Default"
+                                       Size="Size.Small"
+                                       OnClick="@(() => IsExpanded = !IsExpanded)"
+                                       aria-label="@(IsExpanded ? L["FilterBuilder_Collapse"] : L["FilterBuilder_Expand"])"
+                                       aria-expanded="@IsExpanded" />
+                    </MudTooltip>
+
                     <MudText Typo="Typo.h6" Class="mb-1">@L["FilterBuilder_Title"]</MudText>
+                </div>
+
+                <div class="d-flex align-center" style="gap: 4px;">
                     <MudText Typo="Typo.body2" Color="Color.Tertiary">
-                        @if (Conditions.Any())
+                        @if (!Conditions.Any())
                         {
-                            @L["FilterBuilder_ActiveFilters"].ToString().Replace("{0}", Conditions.Count.ToString())
-                        }
-                        else
-                        {
-                            @L["FilterBuilder_NoFiltersDescription"]
+                            <span>@L["FilterBuilder_NoFiltersDescription"]</span>
                         }
                     </MudText>
 
-                <div class="d-flex align-center flex-wrap" style="gap: 8px;">
                     <MudButton StartIcon="@Icons.Material.Filled.Add"
                                Color="Color.Primary"
                                Variant="Variant.Filled"
-                               Size="Size.Medium"
+                               Size="Size.Small"
                                OnClick="AddCondition"
                                Disabled="@(!FilterableProperties.Any())"
                                aria-label="@L["FilterBuilder_AddFilter"]">
-                        <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">@L["FilterBuilder_AddFilterShort"]</MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.SmAndDown">@L["FilterBuilder_AddFilter"]</MudHidden>
+                        @L["FilterBuilder_AddFilterShort"]
                     </MudButton>
 
                     @if (Conditions.Any())
@@ -34,106 +41,84 @@
                         <MudButton StartIcon="@Icons.Material.Filled.Clear"
                                    Color="Color.Default"
                                    Variant="Variant.Text"
-                                   Size="Size.Medium"
+                                   Size="Size.Small"
                                    OnClick="ClearAll"
                                    aria-label="@L["FilterBuilder_ClearAll"]">
-                            <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">@L["FilterBuilder_ClearAllShort"]</MudHidden>
-                            <MudHidden Breakpoint="Breakpoint.SmAndDown">@L["FilterBuilder_ClearAll"]</MudHidden>
+                            @L["FilterBuilder_ClearAllShort"]
                         </MudButton>
+
+                        <MudDivider Vertical="true" FlexItem="true" Style="margin: 0 4px;" />
+
+                        <MudTooltip Text="@L["FilterBuilder_LogicalAndTooltip"]" Placement="Placement.Top">
+                            <MudToggleIconButton Icon="@Icons.Material.Filled.FilterList"
+                                                 ToggledIcon="@Icons.Material.Filled.FilterList"
+                                                 Toggled="@(!IsOrOperator)"
+                                                 ToggledChanged="@((bool val) => OnLogicalOperatorChanged(!val))"
+                                                 Color="@(!IsOrOperator ? Color.Primary : Color.Default)"
+                                                 ToggledColor="Color.Primary"
+                                                 Size="Size.Small"
+                                                 aria-label="@L["FilterBuilder_LogicalAndTooltip"]"
+                                                 aria-pressed="@(!IsOrOperator)" />
+                        </MudTooltip>
+
+                        <MudTooltip Text="@L["FilterBuilder_LogicalOrTooltip"]" Placement="Placement.Top">
+                            <MudToggleIconButton Icon="@Icons.Material.Filled.AltRoute"
+                                                 ToggledIcon="@Icons.Material.Filled.AltRoute"
+                                                 Toggled="@IsOrOperator"
+                                                 ToggledChanged="@((bool val) => OnLogicalOperatorChanged(val))"
+                                                 Color="@(IsOrOperator ? Color.Secondary : Color.Default)"
+                                                 ToggledColor="Color.Secondary"
+                                                 Size="Size.Small"
+                                                 aria-label="@L["FilterBuilder_LogicalOrTooltip"]"
+                                                 aria-pressed="@IsOrOperator" />
+                        </MudTooltip>
                     }
                 </div>
             </div>
 
-            @if (Conditions.Count > 1)
-            {
-                <MudPaper Class="pa-3" Outlined="true" Style="background-color: var(--mud-palette-background-grey);">
-                    <div class="d-flex align-center justify-space-between flex-wrap" style="gap: 12px;">
-                        <MudText Typo="Typo.body2" Color="Color.Tertiary">
-                            <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Class="mr-1" Style="vertical-align: middle;" />
-                            @L["FilterBuilder_LogicalOperatorDescription"]
-                        </MudText>
-
-                        <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small" aria-label="@L["FilterBuilder_LogicalOperatorLabel"]">
-                            <MudButton OnClick="@(() => OnLogicalOperatorChanged(false))"
-                                       Color="@(!IsOrOperator ? Color.Primary : Color.Default)"
-                                       Variant="@(!IsOrOperator ? Variant.Filled : Variant.Outlined)"
-                                       StartIcon="@Icons.Material.Filled.FilterList"
-                                       aria-pressed="@(!IsOrOperator)"
-                                       aria-label="@L["FilterBuilder_LogicalAndTooltip"]">
-                                @L["FilterBuilder_LogicalAnd"]
-                            </MudButton>
-                            <MudButton OnClick="@(() => OnLogicalOperatorChanged(true))"
-                                       Color="@(IsOrOperator ? Color.Secondary : Color.Default)"
-                                       Variant="@(IsOrOperator ? Variant.Filled : Variant.Outlined)"
-                                       StartIcon="@Icons.Material.Filled.AltRoute"
-                                       aria-pressed="@IsOrOperator"
-                                       aria-label="@L["FilterBuilder_LogicalOrTooltip"]">
-                                @L["FilterBuilder_LogicalOr"]
-                            </MudButton>
-                        </MudButtonGroup>
-                    </div>
-                </MudPaper>
-            }
         </MudStack>
 
-        @if (Conditions.Any())
-        {
-            <MudStack Spacing="3">
-                @for (var i = 0; i < Conditions.Count; i++)
-                {
-                    var condition = Conditions[i];
-                    var index = i;
+        <MudCollapse Expanded="@IsExpanded">
+            @if (Conditions.Any())
+            {
+                <MudStack Spacing="3">
+                    @for (var i = 0; i < Conditions.Count; i++)
+                    {
+                        var condition = Conditions[i];
+                        var index = i;
 
-                    <div style="position: relative;">
-                        <FilterConditionRow Condition="@condition"
-                                            AvailableProperties="@FilterableProperties"
-                                            OnConditionChanged="@(() => OnConditionChanged())"
-                                            OnRemoveRequested="@(() => RemoveCondition(condition))"
-                                            CanRemove="@(Conditions.Count > 0)" />
+                        <div style="position: relative;">
+                            <FilterConditionRow Condition="@condition"
+                                                AvailableProperties="@FilterableProperties"
+                                                OnConditionChanged="@(() => OnConditionChanged())"
+                                                OnRemoveRequested="@(() => RemoveCondition(condition))"
+                                                CanRemove="@(Conditions.Count > 0)" />
 
-                        @* UX IMPROVEMENT: Visual AND/OR separator between conditions *@
-                        @if (i < Conditions.Count - 1)
-                        {
-                            <div class="d-flex align-center justify-center my-2">
-                                <MudDivider Class="flex-grow-1" />
-                                <MudChip T="string"
-                                         Size="Size.Small"
-                                         Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
-                                         Variant="Variant.Text"
-                                         Class="mx-2"
-                                         Style="font-weight: 600;">
-                                    @(IsOrOperator ? L["FilterBuilder_LogicalOr"] : L["FilterBuilder_LogicalAnd"])
-                                </MudChip>
-                                <MudDivider Class="flex-grow-1" />
-                            </div>
-                        }
-                    </div>
-                }
-            </MudStack>
-        }
+                            @if (i < Conditions.Count - 1)
+                            {
+                                <div class="d-flex align-center justify-center" style="margin: 4px 0; gap: 12px; min-height: 24px; width: 100%;">
+                                    <div style="flex: 1;">
+                                        <MudDivider />
+                                    </div>
+                                    <MudChip T="string"
+                                             Size="Size.Small"
+                                             Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
+                                             Variant="Variant.Text"
+                                             Style="font-weight: 600; padding: 0 4px; white-space: nowrap; flex-shrink: 0;">
+                                        @(IsOrOperator ? L["FilterBuilder_LogicalOr"] : L["FilterBuilder_LogicalAnd"])
+                                    </MudChip>
+                                    <div style="flex: 1;">
+                                        <MudDivider />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </MudStack>
+            }
+        </MudCollapse>
     </MudStack>
 </MudPaper>
-
-<style>
-    .mud-input-monospace input,
-    .mud-input-monospace textarea {
-        font-family: 'Consolas', 'Monaco', 'Courier New', Courier, monospace;
-        font-size: 0.875rem;
-        line-height: 1.5;
-    }
-
-    .mud-button-group .mud-button {
-        transition: all 0.2s ease-in-out;
-    }
-
-    .mud-chip {
-        transition: all 0.2s ease-in-out;
-    }
-
-    .mud-paper {
-        transition: box-shadow 0.2s ease-in-out;
-    }
-</style>
 
 @code {
     /// <summary>
@@ -169,6 +154,11 @@
     /// The logical operator between conditions (false = AND, true = OR)
     /// </summary>
     private bool IsOrOperator { get; set; }
+
+    /// <summary>
+    /// Whether the filter conditions are expanded or collapsed
+    /// </summary>
+    private bool IsExpanded { get; set; } = true;
 
     /// <summary>
     /// The generated Gridify query string

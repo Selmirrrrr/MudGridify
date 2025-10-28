@@ -76,8 +76,7 @@ public static class GridifyQueryParser
         var value = match.Groups[3].Value;
 
         // Find the matching FilterableProperty
-        var property = filterableProperties.FirstOrDefault(p =>
-            p.PropertyName.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
+        var property = filterableProperties.FirstOrDefault(p => p.PropertyName.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
 
         if (property == null)
         {

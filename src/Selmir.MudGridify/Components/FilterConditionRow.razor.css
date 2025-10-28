@@ -1,0 +1,40 @@
+.filter-row-paper {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--mud-palette-divider);
+    background-color: var(--mud-palette-surface);
+    position: relative;
+}
+
+.filter-row-paper:hover {
+    box-shadow: 0 2px 12px rgba(var(--mud-palette-primary-rgb), 0.15);
+    border-color: var(--mud-palette-primary);
+    transform: translateY(-1px);
+}
+
+.filter-row-paper.is-hovering {
+    transform: translateY(-1px);
+}
+
+/* Enhanced input focus states */
+.filter-row-paper:focus-within {
+    box-shadow: 0 0 0 3px rgba(var(--mud-palette-primary-rgb), 0.2);
+    border-color: var(--mud-palette-primary);
+}
+
+.mud-input-control {
+    transition: all 0.2s ease-in-out;
+}
+
+.mud-input-control:focus-within {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Smooth checkbox toggle animation */
+.mud-checkbox {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Icon button hover effect */
+.mud-icon-button {
+    transition: all 0.2s ease-in-out;
+}

@@ -159,4 +159,12 @@
   <data name="Boolean_False" xml:space="preserve">
     <value>Faux</value>
   </data>
+
+  <!-- Filter Builder Actions -->
+  <data name="FilterBuilder_Collapse" xml:space="preserve">
+    <value>Réduire</value>
+  </data>
+  <data name="FilterBuilder_Expand" xml:space="preserve">
+    <value>Développer</value>
+  </data>
 </root>

@@ -1,219 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-
-  <!-- Filter Builder -->
-  <data name="FilterBuilder_Title" xml:space="preserve">
-    <value>Filter Builder</value>
-  </data>
-  <data name="FilterBuilder_AddFilter" xml:space="preserve">
-    <value>Add Filter</value>
-  </data>
-  <data name="FilterBuilder_AddFilterShort" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="FilterBuilder_ClearAll" xml:space="preserve">
-    <value>Clear All</value>
-  </data>
-  <data name="FilterBuilder_ClearAllShort" xml:space="preserve">
-    <value>Clear</value>
-  </data>
-  <data name="FilterBuilder_NoFilters" xml:space="preserve">
-    <value>No filters applied. Click "Add Filter" to add a condition.</value>
-  </data>
-  <data name="FilterBuilder_GeneratedQuery" xml:space="preserve">
-    <value>Generated Gridify Query:</value>
-  </data>
-  <data name="FilterBuilder_LogicalAnd" xml:space="preserve">
-    <value>AND</value>
-  </data>
-  <data name="FilterBuilder_LogicalOr" xml:space="preserve">
-    <value>OR</value>
-  </data>
-  <data name="FilterBuilder_LogicalAndTooltip" xml:space="preserve">
-    <value>AND (all conditions)</value>
-  </data>
-  <data name="FilterBuilder_LogicalOrTooltip" xml:space="preserve">
-    <value>OR (any condition)</value>
-  </data>
-  <data name="FilterBuilder_LogicalOperatorDescription" xml:space="preserve">
-    <value>How should multiple filters be combined?</value>
-  </data>
-  <data name="FilterBuilder_LogicalOperatorLabel" xml:space="preserve">
-    <value>Logical Operator</value>
-  </data>
-  <data name="FilterBuilder_ActiveFilters" xml:space="preserve">
-    <value>{0} active filter(s)</value>
-  </data>
-  <data name="FilterBuilder_NoFiltersDescription" xml:space="preserve">
-    <value>Get started by adding your first filter</value>
-  </data>
-  <data name="FilterBuilder_EmptyStateMessage" xml:space="preserve">
-    <value>Build powerful queries by combining multiple filter conditions. Choose a property, operator, and value to get started.</value>
-  </data>
-  <data name="FilterBuilder_AddFirstFilter" xml:space="preserve">
-    <value>Add Your First Filter</value>
-  </data>
-  <data name="FilterBuilder_CopyToClipboard" xml:space="preserve">
-    <value>Copy to clipboard</value>
-  </data>
-  <data name="FilterBuilder_Copied" xml:space="preserve">
-    <value>Copied!</value>
-  </data>
-  <data name="FilterBuilder_GeneratedQueryField" xml:space="preserve">
-    <value>Generated query string</value>
-  </data>
-  <data name="FilterBuilder_CopySuccess" xml:space="preserve">
-    <value>Query copied to clipboard!</value>
-  </data>
-  <data name="FilterBuilder_CopyError" xml:space="preserve">
-    <value>Failed to copy to clipboard</value>
-  </data>
-
-  <!-- Filter Condition Row -->
-  <data name="FilterCondition_Property" xml:space="preserve">
-    <value>Property</value>
-  </data>
-  <data name="FilterCondition_Operator" xml:space="preserve">
-    <value>Operator</value>
-  </data>
-  <data name="FilterCondition_Value" xml:space="preserve">
-    <value>Value</value>
-  </data>
-  <data name="FilterCondition_CaseInsensitive" xml:space="preserve">
-    <value>Case Insensitive</value>
-  </data>
-  <data name="FilterCondition_CaseInsensitiveTooltip" xml:space="preserve">
-    <value>Case Insensitive Matching</value>
-  </data>
-  <data name="FilterCondition_Delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="FilterCondition_PropertyAriaLabel" xml:space="preserve">
-    <value>Select property to filter</value>
-  </data>
-  <data name="FilterCondition_OperatorAriaLabel" xml:space="preserve">
-    <value>Select filter operator</value>
-  </data>
-  <data name="FilterCondition_ValueAriaLabel" xml:space="preserve">
-    <value>Enter filter value</value>
-  </data>
-  <data name="FilterCondition_Remove" xml:space="preserve">
-    <value>Remove Filter</value>
-  </data>
-  <data name="FilterCondition_RemoveShort" xml:space="preserve">
-    <value>Remove</value>
-  </data>
-  <data name="FilterCondition_RemoveTooltip" xml:space="preserve">
-    <value>Remove this filter condition</value>
-  </data>
-  <data name="FilterCondition_SelectPropertyFirst" xml:space="preserve">
-    <value>Select a property first</value>
-  </data>
-  <data name="FilterCondition_DateTimePlaceholder" xml:space="preserve">
-    <value>Select date and time</value>
-  </data>
-
-  <!-- Filter Operators -->
-  <data name="Operator_Equals" xml:space="preserve">
-    <value>Equals</value>
-  </data>
-  <data name="Operator_NotEquals" xml:space="preserve">
-    <value>Not Equals</value>
-  </data>
-  <data name="Operator_GreaterThan" xml:space="preserve">
-    <value>Greater Than</value>
-  </data>
-  <data name="Operator_LessThan" xml:space="preserve">
-    <value>Less Than</value>
-  </data>
-  <data name="Operator_GreaterOrEqual" xml:space="preserve">
-    <value>Greater or Equal</value>
-  </data>
-  <data name="Operator_LessOrEqual" xml:space="preserve">
-    <value>Less or Equal</value>
-  </data>
-  <data name="Operator_Contains" xml:space="preserve">
-    <value>Contains</value>
-  </data>
-  <data name="Operator_NotContains" xml:space="preserve">
-    <value>Not Contains</value>
-  </data>
-  <data name="Operator_StartsWith" xml:space="preserve">
-    <value>Starts With</value>
-  </data>
-  <data name="Operator_NotStartsWith" xml:space="preserve">
-    <value>Not Starts With</value>
-  </data>
-  <data name="Operator_EndsWith" xml:space="preserve">
-    <value>Ends With</value>
-  </data>
-  <data name="Operator_NotEndsWith" xml:space="preserve">
-    <value>Not Ends With</value>
-  </data>
-
-  <!-- Boolean Values -->
-  <data name="Boolean_True" xml:space="preserve">
-    <value>True</value>
-  </data>
-  <data name="Boolean_False" xml:space="preserve">
-    <value>False</value>
-  </data>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <!-- Filter Builder -->
+    <!-- Filter Condition Row -->
+    <!-- Filter Operators -->
+    <!-- Boolean Values -->
+    <!-- Filter Builder Actions -->
+    <data name="FilterBuilder_Title" xml:space="preserve">
+        <value>Filter Builder</value>
+    </data>
+    <data name="FilterBuilder_AddFilter" xml:space="preserve">
+        <value>Add</value>
+    </data>
+    <data name="FilterBuilder_AddFilterShort" xml:space="preserve">
+        <value>Add</value>
+    </data>
+    <data name="FilterBuilder_ClearAll" xml:space="preserve">
+        <value>Clear</value>
+    </data>
+    <data name="FilterBuilder_ClearAllShort" xml:space="preserve">
+        <value>Clear</value>
+    </data>
+    <data name="FilterBuilder_NoFilters" xml:space="preserve">
+        <value>No filters applied. Click "Add Filter" to add a condition.</value>
+    </data>
+    <data name="FilterBuilder_GeneratedQuery" xml:space="preserve">
+        <value>Generated Gridify Query:</value>
+    </data>
+    <data name="FilterBuilder_LogicalAnd" xml:space="preserve">
+        <value>AND</value>
+    </data>
+    <data name="FilterBuilder_LogicalOr" xml:space="preserve">
+        <value>OR</value>
+    </data>
+    <data name="FilterBuilder_LogicalAndTooltip" xml:space="preserve">
+        <value>AND (all conditions)</value>
+    </data>
+    <data name="FilterBuilder_LogicalOrTooltip" xml:space="preserve">
+        <value>OR (any condition)</value>
+    </data>
+    <data name="FilterBuilder_LogicalOperatorDescription" xml:space="preserve">
+        <value>How should multiple filters be combined?</value>
+    </data>
+    <data name="FilterBuilder_LogicalOperatorLabel" xml:space="preserve">
+        <value>Logical Operator</value>
+    </data>
+    <data name="FilterBuilder_ActiveFilters" xml:space="preserve">
+        <value>{0} active filter(s)</value>
+    </data>
+    <data name="FilterBuilder_NoFiltersDescription" xml:space="preserve">
+        <value>Get started by adding your first filter</value>
+    </data>
+    <data name="FilterBuilder_EmptyStateMessage" xml:space="preserve">
+        <value>Build powerful queries by combining multiple filter conditions. Choose a property, operator, and value to get started.</value>
+    </data>
+    <data name="FilterBuilder_AddFirstFilter" xml:space="preserve">
+        <value>Add Your First Filter</value>
+    </data>
+    <data name="FilterBuilder_CopyToClipboard" xml:space="preserve">
+        <value>Copy to clipboard</value>
+    </data>
+    <data name="FilterBuilder_Copied" xml:space="preserve">
+        <value>Copied!</value>
+    </data>
+    <data name="FilterBuilder_GeneratedQueryField" xml:space="preserve">
+        <value>Generated query string</value>
+    </data>
+    <data name="FilterBuilder_CopySuccess" xml:space="preserve">
+        <value>Query copied to clipboard!</value>
+    </data>
+    <data name="FilterBuilder_CopyError" xml:space="preserve">
+        <value>Failed to copy to clipboard</value>
+    </data>
+    <data name="FilterCondition_Property" xml:space="preserve">
+        <value>Property</value>
+    </data>
+    <data name="FilterCondition_Operator" xml:space="preserve">
+        <value>Operator</value>
+    </data>
+    <data name="FilterCondition_Value" xml:space="preserve">
+        <value>Value</value>
+    </data>
+    <data name="FilterCondition_CaseInsensitive" xml:space="preserve">
+        <value>Case Insensitive</value>
+    </data>
+    <data name="FilterCondition_CaseInsensitiveTooltip" xml:space="preserve">
+        <value>Case Insensitive Matching</value>
+    </data>
+    <data name="FilterCondition_Delete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="FilterCondition_PropertyAriaLabel" xml:space="preserve">
+        <value>Select property to filter</value>
+    </data>
+    <data name="FilterCondition_OperatorAriaLabel" xml:space="preserve">
+        <value>Select filter operator</value>
+    </data>
+    <data name="FilterCondition_ValueAriaLabel" xml:space="preserve">
+        <value>Enter filter value</value>
+    </data>
+    <data name="FilterCondition_Remove" xml:space="preserve">
+        <value>Remove Filter</value>
+    </data>
+    <data name="FilterCondition_RemoveShort" xml:space="preserve">
+        <value>Remove</value>
+    </data>
+    <data name="FilterCondition_RemoveTooltip" xml:space="preserve">
+        <value>Remove this filter condition</value>
+    </data>
+    <data name="FilterCondition_SelectPropertyFirst" xml:space="preserve">
+        <value>Select a property first</value>
+    </data>
+    <data name="FilterCondition_DateTimePlaceholder" xml:space="preserve">
+        <value>Select date and time</value>
+    </data>
+    <data name="Operator_Equals" xml:space="preserve">
+        <value>Equals</value>
+    </data>
+    <data name="Operator_NotEquals" xml:space="preserve">
+        <value>Not Equals</value>
+    </data>
+    <data name="Operator_GreaterThan" xml:space="preserve">
+        <value>Greater Than</value>
+    </data>
+    <data name="Operator_LessThan" xml:space="preserve">
+        <value>Less Than</value>
+    </data>
+    <data name="Operator_GreaterOrEqual" xml:space="preserve">
+        <value>Greater or Equal</value>
+    </data>
+    <data name="Operator_LessOrEqual" xml:space="preserve">
+        <value>Less or Equal</value>
+    </data>
+    <data name="Operator_Contains" xml:space="preserve">
+        <value>Contains</value>
+    </data>
+    <data name="Operator_NotContains" xml:space="preserve">
+        <value>Not Contains</value>
+    </data>
+    <data name="Operator_StartsWith" xml:space="preserve">
+        <value>Starts With</value>
+    </data>
+    <data name="Operator_NotStartsWith" xml:space="preserve">
+        <value>Not Starts With</value>
+    </data>
+    <data name="Operator_EndsWith" xml:space="preserve">
+        <value>Ends With</value>
+    </data>
+    <data name="Operator_NotEndsWith" xml:space="preserve">
+        <value>Not Ends With</value>
+    </data>
+    <data name="Boolean_True" xml:space="preserve">
+        <value>True</value>
+    </data>
+    <data name="Boolean_False" xml:space="preserve">
+        <value>False</value>
+    </data>
+    <data name="FilterBuilder_Collapse" xml:space="preserve">
+        <value>Collapse</value>
+    </data>
+    <data name="FilterBuilder_Expand" xml:space="preserve">
+        <value>Expand</value>
+    </data>
 </root>
