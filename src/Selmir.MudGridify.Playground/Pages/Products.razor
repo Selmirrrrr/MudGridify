@@ -1,0 +1,172 @@
+@page "/products"
+
+<PageTitle>Product Filter - MudGridify</PageTitle>
+
+<MudStack Spacing="4">
+    <MudPaper Class="pa-4" Elevation="0">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.h4">
+                <MudIcon Icon="@Icons.Material.Filled.Inventory" Class="mr-2" />
+                Product Filter Demo
+            </MudText>
+            <MudText Typo="Typo.body1" Color="Color.Secondary">
+                Filter products by name, category, price, stock quantity, and availability status.
+            </MudText>
+        </MudStack>
+    </MudPaper>
+
+    @* Filter Builder Component *@
+    <GridifyFilterBuilder @ref="_filterBuilder"
+                          FilterableProperties="@_filterableProperties"
+                          ShowGeneratedQuery="true"
+                          OnFilterChanged="@OnFilterChanged" />
+
+    @* Results Display *@
+    <MudPaper Class="pa-4" Elevation="2">
+        <MudStack Spacing="3">
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                <MudText Typo="Typo.h6">
+                    Filtered Results (@_filteredProducts.Count of @_allProducts.Count)
+                </MudText>
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Info"
+                           OnClick="ResetFilters"
+                           StartIcon="@Icons.Material.Filled.Refresh">
+                    Reset Filters
+                </MudButton>
+            </MudStack>
+
+            <MudTable Items="@_filteredProducts"
+                      Dense="true"
+                      Hover="true"
+                      Striped="true"
+                      Loading="@_loading">
+                <HeaderContent>
+                    <MudTh>ID</MudTh>
+                    <MudTh>Name</MudTh>
+                    <MudTh>Category</MudTh>
+                    <MudTh>Price</MudTh>
+                    <MudTh>Stock</MudTh>
+                    <MudTh>In Stock</MudTh>
+                    <MudTh>Created</MudTh>
+                    <MudTh>Last Updated</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="ID">@context.Id</MudTd>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Category">
+                        <MudChip T="string" Size="Size.Small" Color="Color.Info">@context.Category</MudChip>
+                    </MudTd>
+                    <MudTd DataLabel="Price">$@context.Price.ToString("N2")</MudTd>
+                    <MudTd DataLabel="Stock">@context.StockQuantity</MudTd>
+                    <MudTd DataLabel="In Stock">
+                        <MudChip T="string" Size="Size.Small"
+                                 Color="@(context.InStock ? Color.Success : Color.Error)">
+                            @(context.InStock ? "Yes" : "No")
+                        </MudChip>
+                    </MudTd>
+                    <MudTd DataLabel="Created">@context.CreatedDate.ToString("MMM dd, yyyy")</MudTd>
+                    <MudTd DataLabel="Last Updated">@(context.LastUpdated?.ToString("MMM dd, yyyy") ?? "Never")</MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">No products match the current filters.</MudText>
+                </NoRecordsContent>
+            </MudTable>
+        </MudStack>
+    </MudPaper>
+</MudStack>
+
+@code {
+    private GridifyFilterBuilder? _filterBuilder;
+    private List<FilterableProperty> _filterableProperties = new();
+    private List<Product> _allProducts = new();
+    private List<Product> _filteredProducts = new();
+    private bool _loading = false;
+
+    protected override void OnInitialized()
+    {
+        // Define filterable properties
+        _filterableProperties = new List<FilterableProperty>
+        {
+            new("Name", "Product Name", FilterPropertyType.String),
+            new("Category", "Category", FilterPropertyType.String),
+            new("Price", "Price", FilterPropertyType.Number),
+            new("StockQuantity", "Stock Quantity", FilterPropertyType.Number),
+            new("InStock", "In Stock", FilterPropertyType.Boolean)
+            {
+                TrueLabel = "Available",
+                FalseLabel = "Out of Stock"
+            },
+            new("CreatedDate", "Created Date", FilterPropertyType.Date)
+        };
+
+        // Generate sample data
+        _allProducts = GenerateSampleProducts();
+        _filteredProducts = new List<Product>(_allProducts);
+    }
+
+    private async Task OnFilterChanged(string filterQuery)
+    {
+        _loading = true;
+        await Task.Delay(100); // Simulate processing
+
+        if (string.IsNullOrWhiteSpace(filterQuery))
+        {
+            _filteredProducts = new List<Product>(_allProducts);
+        }
+        else
+        {
+            // Apply Gridify filter
+            var query = _allProducts.AsQueryable();
+            _filteredProducts = query.ApplyFiltering(filterQuery).ToList();
+        }
+
+        _loading = false;
+    }
+
+    private void ResetFilters()
+    {
+        _filteredProducts = new List<Product>(_allProducts);
+        StateHasChanged();
+    }
+
+    private List<Product> GenerateSampleProducts()
+    {
+        var categories = new[] { "Electronics", "Clothing", "Books", "Home & Garden", "Sports", "Toys" };
+        var productPrefixes = new[] { "Premium", "Classic", "Ultra", "Pro", "Essential", "Deluxe", "Standard" };
+        var productTypes = new[]
+        {
+            "Laptop", "Headphones", "Smartphone", "Tablet", "Watch",
+            "Shirt", "Pants", "Shoes", "Jacket", "Hat",
+            "Novel", "Cookbook", "Manual", "Magazine", "Journal",
+            "Chair", "Table", "Lamp", "Vase", "Plant",
+            "Ball", "Racket", "Bike", "Weights", "Mat",
+            "Action Figure", "Puzzle", "Board Game", "Doll", "Building Set"
+        };
+
+        var products = new List<Product>();
+        var random = new Random(42); // Fixed seed for consistent data
+
+        for (int i = 1; i <= 100; i++)
+        {
+            var category = categories[random.Next(categories.Length)];
+            var prefix = productPrefixes[random.Next(productPrefixes.Length)];
+            var type = productTypes[random.Next(productTypes.Length)];
+            var stockQty = random.Next(0, 200);
+
+            products.Add(new Product
+            {
+                Id = i,
+                Name = $"{prefix} {type}",
+                Category = category,
+                Price = (decimal)(random.Next(10, 1000) + random.NextDouble()),
+                StockQuantity = stockQty,
+                InStock = stockQty > 0,
+                CreatedDate = DateTime.Now.AddDays(-random.Next(1, 365)),
+                LastUpdated = random.Next(100) > 30 ? DateTime.Now.AddDays(-random.Next(1, 90)) : null
+            });
+        }
+
+        return products.OrderBy(p => p.Name).ToList();
+    }
+}

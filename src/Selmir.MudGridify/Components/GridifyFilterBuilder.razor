@@ -1,0 +1,257 @@
+@using Selmir.MudGridify.Models
+
+<MudPaper Class="pa-4" Elevation="0">
+    <MudStack Spacing="3">
+        @* Header *@
+        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.h6">Filter Builder</MudText>
+            <MudStack Row="true" Spacing="2">
+                @* Logical Operator Toggle *@
+                @if (Conditions.Count > 1)
+                {
+                    <MudToggleIconButton
+                        Toggled="@IsOrOperator"
+                        ToggledChanged="OnLogicalOperatorChanged"
+                        Icon="@Icons.Material.Filled.LinkOff"
+                        ToggledIcon="@Icons.Material.Filled.Link"
+                        Title="@(IsOrOperator ? "OR (any condition)" : "AND (all conditions)")"
+                        ToggledTitle="@(IsOrOperator ? "OR (any condition)" : "AND (all conditions)")"
+                        Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
+                        ToggledColor="@(IsOrOperator ? Color.Secondary : Color.Primary)" />
+                    <MudChip T="string" Size="Size.Small" Color="@(IsOrOperator ? Color.Secondary : Color.Primary)">
+                        @(IsOrOperator ? "OR" : "AND")
+                    </MudChip>
+                }
+
+                @* Add Condition Button *@
+                <MudButton StartIcon="@Icons.Material.Filled.Add"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Size="Size.Small"
+                           OnClick="AddCondition"
+                           Disabled="@(FilterableProperties == null || !FilterableProperties.Any())">
+                    Add Filter
+                </MudButton>
+
+                @* Clear All Button *@
+                @if (Conditions.Any())
+                {
+                    <MudButton StartIcon="@Icons.Material.Filled.Clear"
+                               Color="Color.Error"
+                               Variant="Variant.Outlined"
+                               Size="Size.Small"
+                               OnClick="ClearAll">
+                        Clear All
+                    </MudButton>
+                }
+            </MudStack>
+        </MudStack>
+
+        @* Conditions *@
+        @if (!Conditions.Any())
+        {
+            <MudAlert Severity="Severity.Info" Dense="true">
+                No filters applied. Click "Add Filter" to add a condition.
+            </MudAlert>
+        }
+        else
+        {
+            @foreach (var condition in Conditions)
+            {
+                <FilterConditionRow Condition="@condition"
+                                    AvailableProperties="@FilterableProperties"
+                                    OnConditionChanged="@(() => OnConditionChanged())"
+                                    OnRemoveRequested="@(() => RemoveCondition(condition))" />
+            }
+        }
+
+        @* Generated Query Display *@
+        @if (ShowGeneratedQuery && !string.IsNullOrWhiteSpace(GeneratedQuery))
+        {
+            <MudPaper Class="pa-3" Outlined="true">
+                <MudStack Spacing="2">
+                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                        <MudText Typo="Typo.subtitle2" Color="Color.Primary">Generated Gridify Query:</MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.ContentCopy"
+                                       Size="Size.Small"
+                                       OnClick="CopyToClipboard"
+                                       Title="Copy to clipboard" />
+                    </MudStack>
+                    <MudTextField T="string"
+                                  Value="@GeneratedQuery"
+                                  ReadOnly="true"
+                                  Variant="Variant.Outlined"
+                                  Lines="3"
+                                  Class="mud-input-monospace" />
+                </MudStack>
+            </MudPaper>
+        }
+    </MudStack>
+</MudPaper>
+
+<style>
+    .mud-input-monospace input,
+    .mud-input-monospace textarea {
+        font-family: 'Courier New', Courier, monospace;
+    }
+</style>
+
+@code {
+    /// <summary>
+    /// List of properties that can be filtered
+    /// </summary>
+    [Parameter]
+    public List<FilterableProperty> FilterableProperties { get; set; } = new();
+
+    /// <summary>
+    /// Initial conditions to load (optional)
+    /// </summary>
+    [Parameter]
+    public List<FilterCondition> InitialConditions { get; set; } = new();
+
+    /// <summary>
+    /// Whether to show the generated Gridify query string
+    /// </summary>
+    [Parameter]
+    public bool ShowGeneratedQuery { get; set; } = true;
+
+    /// <summary>
+    /// Event fired when the filter query changes
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> OnFilterChanged { get; set; }
+
+    /// <summary>
+    /// The current list of filter conditions
+    /// </summary>
+    public List<FilterCondition> Conditions { get; private set; } = new();
+
+    /// <summary>
+    /// The logical operator between conditions (false = AND, true = OR)
+    /// </summary>
+    private bool IsOrOperator { get; set; } = false;
+
+    /// <summary>
+    /// The generated Gridify query string
+    /// </summary>
+    public string GeneratedQuery { get; private set; } = string.Empty;
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        if (InitialConditions.Any())
+        {
+            Conditions = new List<FilterCondition>(InitialConditions);
+        }
+        else if (FilterableProperties.Any())
+        {
+            // Start with one empty condition
+            AddCondition();
+        }
+
+        UpdateGeneratedQuery();
+    }
+
+    private void AddCondition()
+    {
+        var newCondition = new FilterCondition();
+
+        // Pre-select the first property if available
+        if (FilterableProperties.Any())
+        {
+            newCondition.Property = FilterableProperties.First();
+            var operators = FilterOperatorExtensions.GetOperatorsForType(newCondition.Property.PropertyType);
+            newCondition.Operator = operators.FirstOrDefault();
+
+            // Set default value for boolean
+            if (newCondition.Property.PropertyType == FilterPropertyType.Boolean)
+            {
+                newCondition.Value = "true";
+            }
+        }
+
+        Conditions.Add(newCondition);
+        UpdateGeneratedQuery();
+    }
+
+    private void RemoveCondition(FilterCondition condition)
+    {
+        Conditions.Remove(condition);
+        UpdateGeneratedQuery();
+    }
+
+    private void ClearAll()
+    {
+        Conditions.Clear();
+        UpdateGeneratedQuery();
+    }
+
+    private void OnConditionChanged()
+    {
+        UpdateGeneratedQuery();
+    }
+
+    private void OnLogicalOperatorChanged(bool isOr)
+    {
+        IsOrOperator = isOr;
+        UpdateGeneratedQuery();
+    }
+
+    private void UpdateGeneratedQuery()
+    {
+        var validConditions = Conditions
+            .Where(c => c.IsValid())
+            .Select(c => c.ToGridifyString())
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .ToList();
+
+        if (!validConditions.Any())
+        {
+            GeneratedQuery = string.Empty;
+        }
+        else if (validConditions.Count == 1)
+        {
+            GeneratedQuery = validConditions[0];
+        }
+        else
+        {
+            var separator = IsOrOperator ? "|" : ",";
+            GeneratedQuery = string.Join(separator, validConditions);
+        }
+
+        // Notify parent component
+        OnFilterChanged.InvokeAsync(GeneratedQuery);
+    }
+
+    private async Task CopyToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", GeneratedQuery);
+    }
+
+    /// <summary>
+    /// Gets the current Gridify filter query string
+    /// </summary>
+    public string GetFilterQuery() => GeneratedQuery;
+
+    /// <summary>
+    /// Programmatically set conditions
+    /// </summary>
+    public void SetConditions(List<FilterCondition> conditions)
+    {
+        Conditions = new List<FilterCondition>(conditions);
+        UpdateGeneratedQuery();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Programmatically add a condition
+    /// </summary>
+    public void AddCondition(FilterCondition condition)
+    {
+        Conditions.Add(condition);
+        UpdateGeneratedQuery();
+        StateHasChanged();
+    }
+}

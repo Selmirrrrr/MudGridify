@@ -1,0 +1,125 @@
+﻿@page "/"
+
+<PageTitle>Home - MudGridify</PageTitle>
+
+<MudStack Spacing="4">
+    <MudPaper Class="pa-6" Elevation="0">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h3" GutterBottom="true">
+                MudGridify Filter Builder
+            </MudText>
+            <MudText Typo="Typo.body1">
+                A dynamic, type-safe filter builder component for <MudLink Href="https://alirezanet.github.io/Gridify" Target="_blank">Gridify</MudLink>
+                built with <MudLink Href="https://mudblazor.com" Target="_blank">MudBlazor</MudLink>.
+            </MudText>
+        </MudStack>
+    </MudPaper>
+
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudStack Spacing="2">
+                    <MudText Typo="Typo.h6" Color="Color.Primary">
+                        <MudIcon Icon="@Icons.Material.Filled.FilterAlt" Class="mr-2" />
+                        Features
+                    </MudText>
+                    <MudList T="string" Dense="true">
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Check" IconColor="Color.Success">
+                            Dynamic property selection with type-safe filtering
+                        </MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Check" IconColor="Color.Success">
+                            Support for String, Number, Boolean, Date, and DateTime types
+                        </MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Check" IconColor="Color.Success">
+                            All Gridify operators (equals, contains, starts with, etc.)
+                        </MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Check" IconColor="Color.Success">
+                            AND/OR logical operators for combining conditions
+                        </MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Check" IconColor="Color.Success">
+                            Case-insensitive string matching support
+                        </MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Check" IconColor="Color.Success">
+                            Real-time Gridify query generation
+                        </MudListItem>
+                    </MudList>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudStack Spacing="2">
+                    <MudText Typo="Typo.h6" Color="Color.Primary">
+                        <MudIcon Icon="@Icons.Material.Filled.Code" Class="mr-2" />
+                        Gridify Operators
+                    </MudText>
+                    <MudSimpleTable Dense="true" Striped="true">
+                        <thead>
+                            <tr>
+                                <th>Operator</th>
+                                <th>Symbol</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Equals</td>
+                                <td><code>=</code></td>
+                                <td>Equal to</td>
+                            </tr>
+                            <tr>
+                                <td>Not Equals</td>
+                                <td><code>!=</code></td>
+                                <td>Not equal to</td>
+                            </tr>
+                            <tr>
+                                <td>Contains</td>
+                                <td><code>=*</code></td>
+                                <td>Contains substring</td>
+                            </tr>
+                            <tr>
+                                <td>Starts With</td>
+                                <td><code>^</code></td>
+                                <td>Starts with</td>
+                            </tr>
+                            <tr>
+                                <td>Greater Than</td>
+                                <td><code>&gt;</code></td>
+                                <td>Greater than</td>
+                            </tr>
+                            <tr>
+                                <td>Less Than</td>
+                                <td><code>&lt;</code></td>
+                                <td>Less than</td>
+                            </tr>
+                        </tbody>
+                    </MudSimpleTable>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudPaper Class="pa-4" Elevation="2">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.h6" Color="Color.Primary">
+                <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Class="mr-2" />
+                Getting Started
+            </MudText>
+            <MudText Typo="Typo.body2">
+                Explore the examples in the navigation menu to see the filter builder in action:
+            </MudText>
+            <MudStack Row="true" Spacing="2" Class="mt-2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/employees" StartIcon="@Icons.Material.Filled.People">
+                    Employee Example
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Href="/products" StartIcon="@Icons.Material.Filled.Inventory">
+                    Product Example
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Tertiary" Href="/advanced" StartIcon="@Icons.Material.Filled.Science">
+                    Advanced Demo
+                </MudButton>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+</MudStack>

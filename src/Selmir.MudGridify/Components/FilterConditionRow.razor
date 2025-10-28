@@ -1,0 +1,211 @@
+@using Selmir.MudGridify.Models
+
+<MudPaper Class="pa-3 mb-2" Elevation="2">
+    <MudGrid Spacing="2">
+        @* Property Selection *@
+        <MudItem xs="12" sm="3">
+            <MudSelect T="FilterableProperty"
+                       Label="Property"
+                       Value="Condition.Property"
+                       ValueChanged="OnPropertyChanged"
+                       Variant="Variant.Outlined"
+                       Dense="true">
+                @foreach (var prop in AvailableProperties)
+                {
+                    <MudSelectItem Value="@prop">@prop.DisplayName</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+
+        @* Operator Selection *@
+        <MudItem xs="12" sm="2">
+            <MudSelect T="Models.FilterOperator"
+                       Label="Operator"
+                       Value="Condition.Operator"
+                       ValueChanged="OnOperatorChanged"
+                       Variant="Variant.Outlined"
+                       Dense="true"
+                       Disabled="@(Condition.Property == null)">
+                @if (Condition.Property != null)
+                {
+                    foreach (var op in FilterOperatorExtensions.GetOperatorsForType(Condition.Property.PropertyType))
+                    {
+                        <MudSelectItem Value="@op">@op.GetDisplayName()</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+        </MudItem>
+
+        @* Value Input - Dynamic based on property type *@
+        <MudItem xs="12" sm="5">
+            @if (Condition.Property != null)
+            {
+                switch (Condition.Property.PropertyType)
+                {
+                    case FilterPropertyType.String:
+                        <MudTextField T="string"
+                                      Label="Value"
+                                      Value="Condition.Value"
+                                      ValueChanged="OnValueChanged"
+                                      Variant="Variant.Outlined"
+                                      Dense="true" />
+                        break;
+
+                    case FilterPropertyType.Number:
+                        <MudNumericField T="double?"
+                                         Label="Value"
+                                         Value="@GetNumericValue()"
+                                         ValueChanged="@((double? val) => OnNumericValueChanged(val))"
+                                         Variant="Variant.Outlined"
+                                         Dense="true" />
+                        break;
+
+                    case FilterPropertyType.Boolean:
+                        <MudSelect T="string"
+                                   Label="Value"
+                                   Value="Condition.Value"
+                                   ValueChanged="OnValueChanged"
+                                   Variant="Variant.Outlined"
+                                   Dense="true">
+                            <MudSelectItem Value="@("true")">@(Condition.Property.TrueLabel ?? "True")</MudSelectItem>
+                            <MudSelectItem Value="@("false")">@(Condition.Property.FalseLabel ?? "False")</MudSelectItem>
+                        </MudSelect>
+                        break;
+
+                    case FilterPropertyType.Date:
+                        <MudDatePicker Label="Value"
+                                       Date="@GetDateValue()"
+                                       DateChanged="@((DateTime? date) => OnDateChanged(date))"
+                                       Variant="Variant.Outlined"
+                                       Dense="true" />
+                        break;
+
+                    case FilterPropertyType.DateTime:
+                        <MudDatePicker Label="Value"
+                                       Date="@GetDateValue()"
+                                       DateChanged="@((DateTime? date) => OnDateTimeChanged(date))"
+                                       Variant="Variant.Outlined"
+                                       Dense="true" />
+                        break;
+                }
+            }
+            else
+            {
+                <MudTextField T="string"
+                              Label="Value"
+                              Disabled="true"
+                              Variant="Variant.Outlined"
+                              Dense="true" />
+            }
+        </MudItem>
+
+        @* Case Insensitive Toggle (for strings) *@
+        <MudItem xs="6" sm="1" Class="d-flex align-center">
+            @if (Condition.Property?.PropertyType == FilterPropertyType.String)
+            {
+                <MudTooltip Text="Case Insensitive">
+                    <MudCheckBox T="bool"
+                                 Value="Condition.CaseInsensitive"
+                                 ValueChanged="OnCaseInsensitiveChanged"
+                                 Color="Color.Primary"
+                                 Label="Aa" />
+                </MudTooltip>
+            }
+        </MudItem>
+
+        @* Remove Button *@
+        <MudItem xs="6" sm="1" Class="d-flex align-center justify-end">
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           OnClick="OnRemove"
+                           Size="Size.Small" />
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public FilterCondition Condition { get; set; } = new();
+
+    [Parameter]
+    public List<FilterableProperty> AvailableProperties { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnConditionChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnRemoveRequested { get; set; }
+
+    private double? GetNumericValue()
+    {
+        if (double.TryParse(Condition.Value, out var result))
+            return result;
+        return null;
+    }
+
+    private DateTime? GetDateValue()
+    {
+        if (DateTime.TryParse(Condition.Value, out var result))
+            return result;
+        return null;
+    }
+
+    private async Task OnPropertyChanged(FilterableProperty property)
+    {
+        Condition.Property = property;
+
+        // Reset operator to first available for this type
+        if (property != null)
+        {
+            var operators = FilterOperatorExtensions.GetOperatorsForType(property.PropertyType);
+            Condition.Operator = operators.FirstOrDefault();
+        }
+
+        // Reset value
+        Condition.Value = property?.PropertyType == FilterPropertyType.Boolean ? "true" : string.Empty;
+        Condition.CaseInsensitive = false;
+
+        await OnConditionChanged.InvokeAsync();
+    }
+
+    private async Task OnOperatorChanged(Models.FilterOperator op)
+    {
+        Condition.Operator = op;
+        await OnConditionChanged.InvokeAsync();
+    }
+
+    private async Task OnValueChanged(string? value)
+    {
+        Condition.Value = value;
+        await OnConditionChanged.InvokeAsync();
+    }
+
+    private async Task OnNumericValueChanged(double? value)
+    {
+        Condition.Value = value?.ToString();
+        await OnConditionChanged.InvokeAsync();
+    }
+
+    private async Task OnDateChanged(DateTime? date)
+    {
+        Condition.Value = date?.ToString("yyyy-MM-dd");
+        await OnConditionChanged.InvokeAsync();
+    }
+
+    private async Task OnDateTimeChanged(DateTime? date)
+    {
+        Condition.Value = date?.ToString("yyyy-MM-ddTHH:mm:ss");
+        await OnConditionChanged.InvokeAsync();
+    }
+
+    private async Task OnCaseInsensitiveChanged(bool value)
+    {
+        Condition.CaseInsensitive = value;
+        await OnConditionChanged.InvokeAsync();
+    }
+
+    private async Task OnRemove()
+    {
+        await OnRemoveRequested.InvokeAsync();
+    }
+}
