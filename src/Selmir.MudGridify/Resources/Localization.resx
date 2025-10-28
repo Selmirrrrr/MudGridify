@@ -93,6 +93,39 @@
   <data name="FilterBuilder_LogicalOrTooltip" xml:space="preserve">
     <value>OR (any condition)</value>
   </data>
+  <data name="FilterBuilder_LogicalOperatorDescription" xml:space="preserve">
+    <value>How should multiple filters be combined?</value>
+  </data>
+  <data name="FilterBuilder_LogicalOperatorLabel" xml:space="preserve">
+    <value>Logical Operator</value>
+  </data>
+  <data name="FilterBuilder_ActiveFilters" xml:space="preserve">
+    <value>{0} active filter(s)</value>
+  </data>
+  <data name="FilterBuilder_NoFiltersDescription" xml:space="preserve">
+    <value>Get started by adding your first filter</value>
+  </data>
+  <data name="FilterBuilder_EmptyStateMessage" xml:space="preserve">
+    <value>Build powerful queries by combining multiple filter conditions. Choose a property, operator, and value to get started.</value>
+  </data>
+  <data name="FilterBuilder_AddFirstFilter" xml:space="preserve">
+    <value>Add Your First Filter</value>
+  </data>
+  <data name="FilterBuilder_CopyToClipboard" xml:space="preserve">
+    <value>Copy to clipboard</value>
+  </data>
+  <data name="FilterBuilder_Copied" xml:space="preserve">
+    <value>Copied!</value>
+  </data>
+  <data name="FilterBuilder_GeneratedQueryField" xml:space="preserve">
+    <value>Generated query string</value>
+  </data>
+  <data name="FilterBuilder_CopySuccess" xml:space="preserve">
+    <value>Query copied to clipboard!</value>
+  </data>
+  <data name="FilterBuilder_CopyError" xml:space="preserve">
+    <value>Failed to copy to clipboard</value>
+  </data>
 
   <!-- Filter Condition Row -->
   <data name="FilterCondition_Property" xml:space="preserve">
@@ -112,6 +145,30 @@
   </data>
   <data name="FilterCondition_Delete" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="FilterCondition_PropertyAriaLabel" xml:space="preserve">
+    <value>Select property to filter</value>
+  </data>
+  <data name="FilterCondition_OperatorAriaLabel" xml:space="preserve">
+    <value>Select filter operator</value>
+  </data>
+  <data name="FilterCondition_ValueAriaLabel" xml:space="preserve">
+    <value>Enter filter value</value>
+  </data>
+  <data name="FilterCondition_Remove" xml:space="preserve">
+    <value>Remove Filter</value>
+  </data>
+  <data name="FilterCondition_RemoveShort" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="FilterCondition_RemoveTooltip" xml:space="preserve">
+    <value>Remove this filter condition</value>
+  </data>
+  <data name="FilterCondition_SelectPropertyFirst" xml:space="preserve">
+    <value>Select a property first</value>
+  </data>
+  <data name="FilterCondition_DateTimePlaceholder" xml:space="preserve">
+    <value>Select date and time</value>
   </data>
 
   <!-- Filter Operators -->

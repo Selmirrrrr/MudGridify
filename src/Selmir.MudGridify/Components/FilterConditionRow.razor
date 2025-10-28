@@ -1,16 +1,36 @@
 @using Selmir.MudGridify.Models
+@using Microsoft.Extensions.Localization
+@using MudBlazor
+@inject IStringLocalizer<Resources.Localization> L
 
-<MudPaper Class="pa-3 mb-2" Elevation="2">
+@*
+    UX IMPROVEMENT: Reduced elevation from 2 to 0, added border and hover effect
+    Better spacing and responsive padding
+*@
+<MudPaper Class="@GetPaperClass()"
+          Elevation="0"
+          Style="@GetPaperStyle()"
+          @onmouseenter="OnMouseEnter"
+          @onmouseleave="OnMouseLeave">
     <MudGrid Spacing="2">
+        @*
+            UX IMPROVEMENT: Improved column distribution
+            - Property: xs=12, sm=12, md=4 (more space for longer names)
+            - Operator: xs=12, sm=6, md=3 (adequate for operators)
+            - Value: xs=12, sm=6, md=5 (main input area)
+            - Mobile-first: Each field full width on mobile for better UX
+        *@
+
         @* Property Selection *@
-        <MudItem xs="12" sm="12" md="3" lg="3">
+        <MudItem xs="12" sm="12" md="4">
             <MudSelect T="FilterableProperty"
                        Label="@L["FilterCondition_Property"]"
                        Value="Condition.Property"
                        ValueChanged="OnPropertyChanged"
                        Variant="Variant.Outlined"
                        Dense="true"
-                       FullWidth="true">
+                       FullWidth="true"
+                       aria-label="@L["FilterCondition_PropertyAriaLabel"]">
                 @foreach (var prop in AvailableProperties)
                 {
                     <MudSelectItem Value="@prop">@prop.DisplayName</MudSelectItem>
@@ -19,7 +39,7 @@
         </MudItem>
 
         @* Operator Selection *@
-        <MudItem xs="12" sm="6" md="3" lg="2">
+        <MudItem xs="12" sm="6" md="3">
             <MudSelect T="Models.FilterOperator"
                        Label="@L["FilterCondition_Operator"]"
                        Value="Condition.Operator"
@@ -27,7 +47,8 @@
                        Variant="Variant.Outlined"
                        Dense="true"
                        FullWidth="true"
-                       Disabled="@(Condition.Property == null)">
+                       Disabled="@(Condition.Property == null)"
+                       aria-label="@L["FilterCondition_OperatorAriaLabel"]">
                 @if (Condition.Property != null)
                 {
                     foreach (var op in FilterOperatorExtensions.GetOperatorsForType(Condition.Property.PropertyType))
@@ -38,58 +59,92 @@
             </MudSelect>
         </MudItem>
 
-        @* Value Input - Dynamic based on property type *@
-        <MudItem xs="12" sm="6" md="4" lg="5">
+        @*
+            UX IMPROVEMENT: Value input column now includes case-insensitive toggle inline
+            This improves discoverability and reduces layout shifts
+        *@
+        <MudItem xs="12" sm="6" md="5">
             @if (Condition.Property != null)
             {
-                switch (Condition.Property.PropertyType)
-                {
-                    case FilterPropertyType.String:
-                        <MudTextField T="string"
-                                      Label="@L["FilterCondition_Value"]"
-                                      Value="Condition.Value"
-                                      ValueChanged="OnValueChanged"
-                                      Variant="Variant.Outlined"
-                                      Dense="true" />
-                        break;
+                <div style="position: relative;">
+                    @switch (Condition.Property.PropertyType)
+                    {
+                        case FilterPropertyType.String:
+                            <MudTextField T="string"
+                                          Label="@L["FilterCondition_Value"]"
+                                          Value="Condition.Value"
+                                          ValueChanged="OnValueChanged"
+                                          Variant="Variant.Outlined"
+                                          Dense="true"
+                                          aria-label="@L["FilterCondition_ValueAriaLabel"]"
+                                          Immediate="false" />
+                            @* UX IMPROVEMENT: Case-insensitive toggle now appears as adornment icon *@
+                            <div style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); z-index: 1;">
+                                <MudTooltip Text="@L["FilterCondition_CaseInsensitiveTooltip"]" Placement="Placement.Top">
+                                    <MudIconButton Icon="@(Condition.CaseInsensitive ? Icons.Material.Filled.TextFields : Icons.Material.Outlined.TextFields)"
+                                                   Size="Size.Small"
+                                                   Color="@(Condition.CaseInsensitive ? Color.Primary : Color.Default)"
+                                                   OnClick="ToggleCaseInsensitive"
+                                                   aria-label="@L["FilterCondition_CaseInsensitive"]"
+                                                   aria-pressed="@Condition.CaseInsensitive"
+                                                   Style="margin-right: 4px;" />
+                                </MudTooltip>
+                            </div>
+                            break;
 
-                    case FilterPropertyType.Number:
-                        <MudNumericField T="double?"
-                                         Label="@L["FilterCondition_Value"]"
-                                         Value="@GetNumericValue()"
-                                         ValueChanged="@((double? val) => OnNumericValueChanged(val))"
-                                         Variant="Variant.Outlined"
-                                         Dense="true" />
-                        break;
+                        case FilterPropertyType.Number:
+                            <MudNumericField T="double?"
+                                             Label="@L["FilterCondition_Value"]"
+                                             Value="@GetNumericValue()"
+                                             ValueChanged="@((double? val) => OnNumericValueChanged(val))"
+                                             Variant="Variant.Outlined"
+                                             Dense="true"
+                                             aria-label="@L["FilterCondition_ValueAriaLabel"]" />
+                            break;
 
-                    case FilterPropertyType.Boolean:
-                        <MudSelect T="string"
-                                   Label="@L["FilterCondition_Value"]"
-                                   Value="Condition.Value"
-                                   ValueChanged="OnValueChanged"
-                                   Variant="Variant.Outlined"
-                                   Dense="true">
-                            <MudSelectItem Value="@("true")">@(Condition.Property.TrueLabel ?? L["Boolean_True"])</MudSelectItem>
-                            <MudSelectItem Value="@("false")">@(Condition.Property.FalseLabel ?? L["Boolean_False"])</MudSelectItem>
-                        </MudSelect>
-                        break;
-
-                    case FilterPropertyType.Date:
-                        <MudDatePicker Label="@L["FilterCondition_Value"]"
-                                       Date="@GetDateValue()"
-                                       DateChanged="@((DateTime? date) => OnDateChanged(date))"
+                        case FilterPropertyType.Boolean:
+                            <MudSelect T="string"
+                                       Label="@L["FilterCondition_Value"]"
+                                       Value="Condition.Value"
+                                       ValueChanged="OnValueChanged"
                                        Variant="Variant.Outlined"
-                                       Dense="true" />
-                        break;
+                                       Dense="true"
+                                       aria-label="@L["FilterCondition_ValueAriaLabel"]">
+                                <MudSelectItem Value="@("true")">
+                                    <div class="d-flex align-center" style="gap: 8px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" Color="Color.Success" />
+                                        <span>@(Condition.Property.TrueLabel ?? L["Boolean_True"])</span>
+                                    </div>
+                                </MudSelectItem>
+                                <MudSelectItem Value="@("false")">
+                                    <div class="d-flex align-center" style="gap: 8px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Error" />
+                                        <span>@(Condition.Property.FalseLabel ?? L["Boolean_False"])</span>
+                                    </div>
+                                </MudSelectItem>
+                            </MudSelect>
+                            break;
 
-                    case FilterPropertyType.DateTime:
-                        <MudDatePicker Label="@L["FilterCondition_Value"]"
-                                       Date="@GetDateValue()"
-                                       DateChanged="@((DateTime? date) => OnDateTimeChanged(date))"
-                                       Variant="Variant.Outlined"
-                                       Dense="true" />
-                        break;
-                }
+                        case FilterPropertyType.Date:
+                            <MudDatePicker Label="@L["FilterCondition_Value"]"
+                                           Date="@GetDateValue()"
+                                           DateChanged="@((DateTime? date) => OnDateChanged(date))"
+                                           Variant="Variant.Outlined"
+                                           Dense="true"
+                                           aria-label="@L["FilterCondition_ValueAriaLabel"]" />
+                            break;
+
+                        case FilterPropertyType.DateTime:
+                            <MudDatePicker Label="@L["FilterCondition_Value"]"
+                                           Date="@GetDateValue()"
+                                           DateChanged="@((DateTime? date) => OnDateTimeChanged(date))"
+                                           Variant="Variant.Outlined"
+                                           Dense="true"
+                                           aria-label="@L["FilterCondition_ValueAriaLabel"]"
+                                           Placeholder="@L["FilterCondition_DateTimePlaceholder"]" />
+                            break;
+                    }
+                </div>
             }
             else
             {
@@ -97,38 +152,61 @@
                               Label="@L["FilterCondition_Value"]"
                               Disabled="true"
                               Variant="Variant.Outlined"
-                              Dense="true" />
+                              Dense="true"
+                              Placeholder="@L["FilterCondition_SelectPropertyFirst"]"
+                              aria-label="@L["FilterCondition_ValueAriaLabel"]" />
             }
         </MudItem>
 
-        @* Actions: Case Insensitive Toggle & Remove Button *@
-        <MudItem xs="12" sm="12" md="2" lg="2" Class="d-flex align-center justify-space-between">
-            <div class="d-flex align-center">
-                @if (Condition.Property?.PropertyType == FilterPropertyType.String)
-                {
-                    <MudTooltip Text="@L["FilterCondition_CaseInsensitiveTooltip"]">
-                        <MudCheckBox T="bool"
-                                     Value="Condition.CaseInsensitive"
-                                     ValueChanged="OnCaseInsensitiveChanged"
-                                     Color="Color.Primary"
-                                     Dense="true"
-                                     Label="@L["FilterCondition_CaseInsensitive"]" />
-                    </MudTooltip>
-                }
-            </div>
-            <div class="d-flex align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                               Color="Color.Error"
-                               OnClick="OnRemove"
-                               Size="Size.Medium"
-                               Edge="Edge.End" />
-            </div>
+        @*
+            UX IMPROVEMENT: Actions column simplified - only delete button
+            Larger touch target, better mobile experience
+            Case-insensitive moved to value field inline
+        *@
+        <MudItem xs="12" sm="12" md="12" Class="d-flex align-center justify-end">
+            <MudTooltip Text="@L["FilterCondition_RemoveTooltip"]" Placement="Placement.Top">
+                <MudButton StartIcon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Variant="Variant.Text"
+                           Size="Size.Small"
+                           OnClick="OnRemove"
+                           Disabled="@(!CanRemove)"
+                           aria-label="@L["FilterCondition_Remove"]">
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">@L["FilterCondition_RemoveShort"]</MudHidden>
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown">@L["FilterCondition_Remove"]</MudHidden>
+                </MudButton>
+            </MudTooltip>
         </MudItem>
     </MudGrid>
 </MudPaper>
 
-@using Microsoft.Extensions.Localization
-@inject IStringLocalizer<Resources.Localization> L
+@* UX IMPROVEMENT: Added CSS for smooth transitions and hover effects *@
+<style>
+    .filter-row-paper {
+        transition: all 0.2s ease-in-out;
+        border: 1px solid var(--mud-palette-divider);
+        background-color: var(--mud-palette-surface);
+    }
+
+    .filter-row-paper:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-color: var(--mud-palette-primary);
+    }
+
+    .filter-row-paper.is-hovering {
+        transform: translateY(-1px);
+    }
+
+    /* Enhanced input focus states */
+    .mud-input-control:focus-within {
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Smooth checkbox toggle animation */
+    .mud-checkbox {
+        transition: all 0.2s ease-in-out;
+    }
+</style>
 
 @code {
     [Parameter]
@@ -142,6 +220,37 @@
 
     [Parameter]
     public EventCallback OnRemoveRequested { get; set; }
+
+    /// <summary>
+    /// UX IMPROVEMENT: New parameter to control remove button state
+    /// </summary>
+    [Parameter]
+    public bool CanRemove { get; set; } = true;
+
+    /// <summary>
+    /// UX IMPROVEMENT: Track hover state for enhanced visual feedback
+    /// </summary>
+    private bool IsHovering { get; set; }
+
+    private string GetPaperClass()
+    {
+        return IsHovering ? "filter-row-paper is-hovering pa-3 pa-sm-4" : "filter-row-paper pa-3 pa-sm-4";
+    }
+
+    private string GetPaperStyle()
+    {
+        return "margin-bottom: 12px;";
+    }
+
+    private void OnMouseEnter()
+    {
+        IsHovering = true;
+    }
+
+    private void OnMouseLeave()
+    {
+        IsHovering = false;
+    }
 
     private double? GetNumericValue()
     {
@@ -205,9 +314,12 @@
         await OnConditionChanged.InvokeAsync();
     }
 
-    private async Task OnCaseInsensitiveChanged(bool value)
+    /// <summary>
+    /// UX IMPROVEMENT: Simplified toggle method
+    /// </summary>
+    private async Task ToggleCaseInsensitive()
     {
-        Condition.CaseInsensitive = value;
+        Condition.CaseInsensitive = !Condition.CaseInsensitive;
         await OnConditionChanged.InvokeAsync();
     }
 

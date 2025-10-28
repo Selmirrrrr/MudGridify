@@ -1,107 +1,221 @@
 @using Selmir.MudGridify.Models
 @using Microsoft.Extensions.Localization
+@using MudBlazor
 @inject IStringLocalizer<Resources.Localization> L
 
-<MudPaper Class="pa-4" Elevation="0">
-    <MudStack Spacing="3">
-        @* Header - Responsive Layout *@
-        <MudGrid Spacing="2">
-            <MudItem xs="12" sm="6" md="4" Class="d-flex align-center">
-                <MudText Typo="Typo.h6">@L["FilterBuilder_Title"]</MudText>
-            </MudItem>
+@*
+    UX IMPROVEMENT: Changed from Elevation="0" to Elevation="1" for subtle depth
+    Added soft border for better definition without being heavy
+*@
+<MudPaper Class="pa-4 pa-sm-5" Elevation="1" Style="border: 1px solid var(--mud-palette-divider);">
+    <MudStack Spacing="4">
+        @*
+            UX IMPROVEMENT: Enhanced header with clearer visual hierarchy
+            - Title now has subtitle for context
+            - Actions grouped with better spacing and order
+        *@
+        <MudStack Spacing="2">
+            <div class="d-flex justify-space-between align-center flex-wrap" style="gap: 12px;">
+                <div>
+                    <MudText Typo="Typo.h6" Class="mb-1">@L["FilterBuilder_Title"]</MudText>
+                    @* UX IMPROVEMENT: Added subtitle for context and guidance *@
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary">
+                        @if (Conditions.Any())
+                        {
+                            @L["FilterBuilder_ActiveFilters"].ToString().Replace("{0}", Conditions.Count.ToString())
+                        }
+                        else
+                        {
+                            @L["FilterBuilder_NoFiltersDescription"]
+                        }
+                    </MudText>
+                </div>
 
-            <MudItem xs="12" sm="6" md="8" Class="d-flex align-center justify-end flex-wrap" Style="gap: 8px;">
-                @* Logical Operator Toggle *@
-                @if (Conditions.Count > 1)
+                @* UX IMPROVEMENT: Action buttons with clearer hierarchy and grouping *@
+                <div class="d-flex align-center flex-wrap" style="gap: 8px;">
+                    <MudButton StartIcon="@Icons.Material.Filled.Add"
+                               Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               Size="Size.Medium"
+                               OnClick="AddCondition"
+                               Disabled="@(!FilterableProperties.Any())"
+                               aria-label="@L["FilterBuilder_AddFilter"]">
+                        <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">@L["FilterBuilder_AddFilterShort"]</MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.SmAndDown">@L["FilterBuilder_AddFilter"]</MudHidden>
+                    </MudButton>
+
+                    @* UX IMPROVEMENT: Clear button now uses Text variant for secondary action hierarchy *@
+                    @if (Conditions.Any())
+                    {
+                        <MudButton StartIcon="@Icons.Material.Filled.Clear"
+                                   Color="Color.Default"
+                                   Variant="Variant.Text"
+                                   Size="Size.Medium"
+                                   OnClick="ClearAll"
+                                   aria-label="@L["FilterBuilder_ClearAll"]">
+                            <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">@L["FilterBuilder_ClearAllShort"]</MudHidden>
+                            <MudHidden Breakpoint="Breakpoint.SmAndDown">@L["FilterBuilder_ClearAll"]</MudHidden>
+                        </MudButton>
+                    }
+                </div>
+            </div>
+
+            @*
+                UX IMPROVEMENT: Completely redesigned logical operator toggle
+                - Now a prominent, centered chip-style selector
+                - Uses clearer icons and colors
+                - Only shows when relevant (2+ conditions)
+                - Better mobile experience
+            *@
+            @if (Conditions.Count > 1)
+            {
+                <MudPaper Class="pa-3" Outlined="true" Style="background-color: var(--mud-palette-background-grey);">
+                    <div class="d-flex align-center justify-space-between flex-wrap" style="gap: 12px;">
+                        <MudText Typo="Typo.body2" Color="Color.Tertiary">
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Class="mr-1" Style="vertical-align: middle;" />
+                            @L["FilterBuilder_LogicalOperatorDescription"]
+                        </MudText>
+
+                        @* UX IMPROVEMENT: Segmented button-style toggle instead of icon button *@
+                        <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small" aria-label="@L["FilterBuilder_LogicalOperatorLabel"]">
+                            <MudButton OnClick="@(() => OnLogicalOperatorChanged(false))"
+                                       Color="@(!IsOrOperator ? Color.Primary : Color.Default)"
+                                       Variant="@(!IsOrOperator ? Variant.Filled : Variant.Outlined)"
+                                       StartIcon="@Icons.Material.Filled.FilterList"
+                                       aria-pressed="@(!IsOrOperator)"
+                                       aria-label="@L["FilterBuilder_LogicalAndTooltip"]">
+                                @L["FilterBuilder_LogicalAnd"]
+                            </MudButton>
+                            <MudButton OnClick="@(() => OnLogicalOperatorChanged(true))"
+                                       Color="@(IsOrOperator ? Color.Secondary : Color.Default)"
+                                       Variant="@(IsOrOperator ? Variant.Filled : Variant.Outlined)"
+                                       StartIcon="@Icons.Material.Filled.AltRoute"
+                                       aria-pressed="@IsOrOperator"
+                                       aria-label="@L["FilterBuilder_LogicalOrTooltip"]">
+                                @L["FilterBuilder_LogicalOr"]
+                            </MudButton>
+                        </MudButtonGroup>
+                    </div>
+                </MudPaper>
+            }
+        </MudStack>
+
+        @*
+            UX IMPROVEMENT: Conditions wrapper with transition container
+            Added visual separator between conditions for clarity
+        *@
+        @if (Conditions.Any())
+        {
+            <MudStack Spacing="3">
+                @for (var i = 0; i < Conditions.Count; i++)
                 {
-                    <div class="d-flex align-center" style="gap: 8px;">
-                        <MudToggleIconButton
-                            Toggled="@IsOrOperator"
-                            ToggledChanged="OnLogicalOperatorChanged"
-                            Icon="@Icons.Material.Filled.LinkOff"
-                            ToggledIcon="@Icons.Material.Filled.Link"
-                            Title="@(IsOrOperator ? L["FilterBuilder_LogicalOrTooltip"] : L["FilterBuilder_LogicalAndTooltip"])"
-                            ToggledTitle="@(IsOrOperator ? L["FilterBuilder_LogicalOrTooltip"] : L["FilterBuilder_LogicalAndTooltip"])"
-                            Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
-                            ToggledColor="@(IsOrOperator ? Color.Secondary : Color.Primary)" />
-                        <MudChip T="string" Size="Size.Small" Color="@(IsOrOperator ? Color.Secondary : Color.Primary)">
-                            @(IsOrOperator ? L["FilterBuilder_LogicalOr"] : L["FilterBuilder_LogicalAnd"])
-                        </MudChip>
+                    var condition = Conditions[i];
+                    var index = i;
+
+                    @* UX IMPROVEMENT: Added condition number badge for multi-filter clarity *@
+                    <div style="position: relative;">
+                        @if (Conditions.Count > 1)
+                        {
+                            <div style="position: absolute; left: -8px; top: -8px; z-index: 10;">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Filled" Style="font-weight: 600;">
+                                    @(index + 1)
+                                </MudChip>
+                            </div>
+                        }
+
+                        <FilterConditionRow Condition="@condition"
+                                            AvailableProperties="@FilterableProperties"
+                                            OnConditionChanged="@(() => OnConditionChanged())"
+                                            OnRemoveRequested="@(() => RemoveCondition(condition))"
+                                            CanRemove="@(Conditions.Count > 0)" />
+
+                        @* UX IMPROVEMENT: Visual AND/OR separator between conditions *@
+                        @if (i < Conditions.Count - 1)
+                        {
+                            <div class="d-flex align-center justify-center my-2">
+                                <MudDivider Class="flex-grow-1" />
+                                <MudChip T="string"
+                                         Size="Size.Small"
+                                         Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
+                                         Variant="Variant.Text"
+                                         Class="mx-2"
+                                         Style="font-weight: 600;">
+                                    @(IsOrOperator ? L["FilterBuilder_LogicalOr"] : L["FilterBuilder_LogicalAnd"])
+                                </MudChip>
+                                <MudDivider Class="flex-grow-1" />
+                            </div>
+                        }
                     </div>
                 }
-
-                @* Add Condition Button *@
-                <MudButton StartIcon="@Icons.Material.Filled.Add"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled"
-                           Size="Size.Small"
-                           OnClick="AddCondition"
-                           Disabled="@(FilterableProperties == null || !FilterableProperties.Any())">
-                    <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">@L["FilterBuilder_AddFilter"]</MudHidden>
-                    <MudHidden Breakpoint="Breakpoint.Xs">@L["FilterBuilder_AddFilterShort"]</MudHidden>
-                </MudButton>
-
-                @* Clear All Button *@
-                @if (Conditions.Any())
-                {
-                    <MudButton StartIcon="@Icons.Material.Filled.Clear"
-                               Color="Color.Error"
-                               Variant="Variant.Outlined"
-                               Size="Size.Small"
-                               OnClick="ClearAll">
-                        <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">@L["FilterBuilder_ClearAll"]</MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.Xs">@L["FilterBuilder_ClearAllShort"]</MudHidden>
-                    </MudButton>
-                }
-            </MudItem>
-        </MudGrid>
-
-        @* Conditions *@
-        @if (!Conditions.Any())
-        {
-            <MudAlert Severity="Severity.Info" Dense="true">
-                @L["FilterBuilder_NoFilters"]
-            </MudAlert>
-        }
-        else
-        {
-            @foreach (var condition in Conditions)
-            {
-                <FilterConditionRow Condition="@condition"
-                                    AvailableProperties="@FilterableProperties"
-                                    OnConditionChanged="@(() => OnConditionChanged())"
-                                    OnRemoveRequested="@(() => RemoveCondition(condition))" />
-            }
+            </MudStack>
         }
 
-        @* Generated Query Display *@
+        @*
+            UX IMPROVEMENT: Enhanced generated query display
+            - Added accent color border for visual prominence
+            - Improved copy feedback with snackbar
+            - Better visual hierarchy
+        *@
         @if (ShowGeneratedQuery && !string.IsNullOrWhiteSpace(GeneratedQuery))
         {
-            <MudPaper Class="pa-3" Outlined="true">
+            <MudPaper Class="pa-4"
+                      Outlined="true"
+                      Style="border: 2px solid var(--mud-palette-primary); background-color: var(--mud-palette-surface);">
                 <MudStack Spacing="2">
-                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                        <MudText Typo="Typo.subtitle2" Color="Color.Primary">@L["FilterBuilder_GeneratedQuery"]</MudText>
-                        <MudIconButton Icon="@Icons.Material.Filled.ContentCopy"
-                                       Size="Size.Small"
-                                       OnClick="CopyToClipboard"
-                                       Title="Copy to clipboard" />
-                    </MudStack>
+                    <div class="d-flex justify-space-between align-center">
+                        <div class="d-flex align-center" style="gap: 8px;">
+                            <MudIcon Icon="@Icons.Material.Filled.Code" Color="Color.Primary" Size="Size.Small" />
+                            <MudText Typo="Typo.subtitle1" Style="font-weight: 600;" Color="Color.Primary">
+                                @L["FilterBuilder_GeneratedQuery"]
+                            </MudText>
+                        </div>
+
+                        @* UX IMPROVEMENT: Enhanced copy button with better feedback *@
+                        <MudTooltip Text="@CopyButtonTooltip">
+                            <MudIconButton Icon="@(IsCopied ? Icons.Material.Filled.Check : Icons.Material.Filled.ContentCopy)"
+                                           Size="Size.Small"
+                                           Color="@(IsCopied ? Color.Success : Color.Default)"
+                                           OnClick="CopyToClipboard"
+                                           aria-label="@L["FilterBuilder_CopyToClipboard"]" />
+                        </MudTooltip>
+                    </div>
+
+                    @* UX IMPROVEMENT: Better query display with syntax highlighting background *@
                     <MudTextField T="string"
                                   Value="@GeneratedQuery"
                                   ReadOnly="true"
-                                  Variant="Variant.Outlined"
+                                  Variant="Variant.Filled"
                                   Lines="3"
-                                  Class="mud-input-monospace" />
+                                  Class="mud-input-monospace"
+                                  aria-label="@L["FilterBuilder_GeneratedQueryField"]" />
                 </MudStack>
             </MudPaper>
         }
     </MudStack>
 </MudPaper>
 
+@* UX IMPROVEMENT: Added CSS for smooth transitions and better monospace styling *@
 <style>
     .mud-input-monospace input,
     .mud-input-monospace textarea {
-        font-family: 'Courier New', Courier, monospace;
+        font-family: 'Consolas', 'Monaco', 'Courier New', Courier, monospace;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    /* Smooth transitions for dynamic elements */
+    .mud-button-group .mud-button {
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Enhance chip animations */
+    .mud-chip {
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Smooth hover states for papers */
+    .mud-paper {
+        transition: box-shadow 0.2s ease-in-out;
     }
 </style>
 
@@ -138,15 +252,28 @@
     /// <summary>
     /// The logical operator between conditions (false = AND, true = OR)
     /// </summary>
-    private bool IsOrOperator { get; set; } = false;
+    private bool IsOrOperator { get; set; }
 
     /// <summary>
     /// The generated Gridify query string
     /// </summary>
     public string GeneratedQuery { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// UX IMPROVEMENT: Track copy state for visual feedback
+    /// </summary>
+    private bool IsCopied { get; set; }
+
+    /// <summary>
+    /// UX IMPROVEMENT: Dynamic tooltip text for copy button
+    /// </summary>
+    private string CopyButtonTooltip => IsCopied ? L["FilterBuilder_Copied"] : L["FilterBuilder_CopyToClipboard"];
+
     [Inject]
-    private IJSRuntime JSRuntime { get; set; } = default!;
+    private IJSRuntime JsRuntime { get; set; } = null!;
+
+    [Inject]
+    private ISnackbar? Snackbar { get; set; }
 
     protected override void OnInitialized()
     {
@@ -234,9 +361,28 @@
         OnFilterChanged.InvokeAsync(GeneratedQuery);
     }
 
+    /// <summary>
+    /// UX IMPROVEMENT: Enhanced copy with visual feedback and timeout
+    /// </summary>
     private async Task CopyToClipboard()
     {
-        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", GeneratedQuery);
+        try
+        {
+            await JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", GeneratedQuery);
+            IsCopied = true;
+
+            // Show success snackbar
+            Snackbar?.Add(L["FilterBuilder_CopySuccess"], Severity.Success);
+
+            // Reset icon after 2 seconds
+            await Task.Delay(2000);
+            IsCopied = false;
+            StateHasChanged();
+        }
+        catch
+        {
+            Snackbar?.Add(L["FilterBuilder_CopyError"], Severity.Error);
+        }
     }
 
     /// <summary>
