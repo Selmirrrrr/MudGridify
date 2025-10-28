@@ -3,13 +3,14 @@
 <MudPaper Class="pa-3 mb-2" Elevation="2">
     <MudGrid Spacing="2">
         @* Property Selection *@
-        <MudItem xs="12" sm="3">
+        <MudItem xs="12" sm="12" md="3" lg="3">
             <MudSelect T="FilterableProperty"
                        Label="Property"
                        Value="Condition.Property"
                        ValueChanged="OnPropertyChanged"
                        Variant="Variant.Outlined"
-                       Dense="true">
+                       Dense="true"
+                       FullWidth="true">
                 @foreach (var prop in AvailableProperties)
                 {
                     <MudSelectItem Value="@prop">@prop.DisplayName</MudSelectItem>
@@ -18,13 +19,14 @@
         </MudItem>
 
         @* Operator Selection *@
-        <MudItem xs="12" sm="2">
+        <MudItem xs="12" sm="6" md="3" lg="2">
             <MudSelect T="Models.FilterOperator"
                        Label="Operator"
                        Value="Condition.Operator"
                        ValueChanged="OnOperatorChanged"
                        Variant="Variant.Outlined"
                        Dense="true"
+                       FullWidth="true"
                        Disabled="@(Condition.Property == null)">
                 @if (Condition.Property != null)
                 {
@@ -37,7 +39,7 @@
         </MudItem>
 
         @* Value Input - Dynamic based on property type *@
-        <MudItem xs="12" sm="5">
+        <MudItem xs="12" sm="6" md="4" lg="5">
             @if (Condition.Property != null)
             {
                 switch (Condition.Property.PropertyType)
@@ -99,26 +101,28 @@
             }
         </MudItem>
 
-        @* Case Insensitive Toggle (for strings) *@
-        <MudItem xs="6" sm="1" Class="d-flex align-center">
-            @if (Condition.Property?.PropertyType == FilterPropertyType.String)
-            {
-                <MudTooltip Text="Case Insensitive">
-                    <MudCheckBox T="bool"
-                                 Value="Condition.CaseInsensitive"
-                                 ValueChanged="OnCaseInsensitiveChanged"
-                                 Color="Color.Primary"
-                                 Label="Aa" />
-                </MudTooltip>
-            }
-        </MudItem>
-
-        @* Remove Button *@
-        <MudItem xs="6" sm="1" Class="d-flex align-center justify-end">
-            <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                           Color="Color.Error"
-                           OnClick="OnRemove"
-                           Size="Size.Small" />
+        @* Actions: Case Insensitive Toggle & Remove Button *@
+        <MudItem xs="12" sm="12" md="2" lg="2" Class="d-flex align-center justify-space-between">
+            <div class="d-flex align-center">
+                @if (Condition.Property?.PropertyType == FilterPropertyType.String)
+                {
+                    <MudTooltip Text="Case Insensitive Matching">
+                        <MudCheckBox T="bool"
+                                     Value="Condition.CaseInsensitive"
+                                     ValueChanged="OnCaseInsensitiveChanged"
+                                     Color="Color.Primary"
+                                     Dense="true"
+                                     Label="Case Insensitive" />
+                    </MudTooltip>
+                }
+            </div>
+            <div class="d-flex align-center">
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               OnClick="OnRemove"
+                               Size="Size.Medium"
+                               Edge="Edge.End" />
+            </div>
         </MudItem>
     </MudGrid>
 </MudPaper>

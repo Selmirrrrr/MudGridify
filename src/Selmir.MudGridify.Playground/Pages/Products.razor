@@ -24,23 +24,31 @@
     @* Results Display *@
     <MudPaper Class="pa-4" Elevation="2">
         <MudStack Spacing="3">
-            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                <MudText Typo="Typo.h6">
-                    Filtered Results (@_filteredProducts.Count of @_allProducts.Count)
-                </MudText>
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Info"
-                           OnClick="ResetFilters"
-                           StartIcon="@Icons.Material.Filled.Refresh">
-                    Reset Filters
-                </MudButton>
-            </MudStack>
+            <MudGrid Spacing="2">
+                <MudItem xs="12" sm="8" Class="d-flex align-center">
+                    <MudText Typo="Typo.h6">
+                        Filtered Results (@_filteredProducts.Count of @_allProducts.Count)
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12" sm="4" Class="d-flex align-center justify-sm-end justify-xs-stretch">
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Info"
+                               OnClick="ResetFilters"
+                               StartIcon="@Icons.Material.Filled.Refresh"
+                               Class="flex-grow-1 flex-sm-grow-0">
+                        <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">Reset Filters</MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.Xs">Reset</MudHidden>
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
 
             <MudTable Items="@_filteredProducts"
                       Dense="true"
                       Hover="true"
                       Striped="true"
-                      Loading="@_loading">
+                      Loading="@_loading"
+                      Breakpoint="Breakpoint.Sm"
+                      HorizontalScrollbar="true">
                 <HeaderContent>
                     <MudTh>ID</MudTh>
                     <MudTh>Name</MudTh>

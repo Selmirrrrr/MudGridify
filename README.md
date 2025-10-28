@@ -21,6 +21,11 @@ A powerful, type-safe Blazor component library that provides a dynamic filter bu
 - **Real-Time Query Generation**: Live preview of generated Gridify query string
 - **Copy to Clipboard**: Quick copy functionality for generated queries
 - **Programmatic Control**: Set conditions, add/remove filters, and get query strings programmatically
+- **Fully Responsive**: Optimized layouts for mobile, tablet, and desktop screens
+  - Adaptive grid layouts with proper breakpoints (xs, sm, md, lg)
+  - Mobile-friendly button labels that shorten on small screens
+  - Horizontal scrolling tables on mobile devices
+  - Touch-friendly controls and spacing
 
 ## Projects
 

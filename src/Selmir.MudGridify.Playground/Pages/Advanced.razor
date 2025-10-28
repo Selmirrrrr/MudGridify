@@ -23,26 +23,41 @@
                 Quick Filter Presets
             </MudText>
             <MudText Typo="Typo.body2">Click a preset to quickly apply common filter combinations:</MudText>
-            <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => ApplyPreset("HighEarners"))">
-                    High Earners (Salary &gt; $100k)
-                </MudButton>
-                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@(() => ApplyPreset("RecentHires"))">
-                    Recent Hires (Last Year)
-                </MudButton>
-                <MudButton Variant="Variant.Outlined" Color="Color.Tertiary" OnClick="@(() => ApplyPreset("Engineering"))">
-                    Engineering Dept
-                </MudButton>
-                <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="@(() => ApplyPreset("InactiveOld"))">
-                    Inactive OR Age &gt; 60
-                </MudButton>
-                <MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="@(() => ApplyPreset("Complex"))">
-                    Complex Query
-                </MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ClearPreset">
-                    Clear All
-                </MudButton>
-            </MudStack>
+            <MudGrid Spacing="2">
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => ApplyPreset("HighEarners"))" FullWidth="true">
+                        <MudHidden Breakpoint="Breakpoint.Md" Invert="true">High Earners (Salary &gt; $100k)</MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.Md">High Earners</MudHidden>
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@(() => ApplyPreset("RecentHires"))" FullWidth="true">
+                        <MudHidden Breakpoint="Breakpoint.Md" Invert="true">Recent Hires (Last Year)</MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.Md">Recent Hires</MudHidden>
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4" lg="2">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Tertiary" OnClick="@(() => ApplyPreset("Engineering"))" FullWidth="true">
+                        Engineering
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4" lg="2">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="@(() => ApplyPreset("InactiveOld"))" FullWidth="true">
+                        <MudHidden Breakpoint="Breakpoint.Md" Invert="true">Inactive OR Age &gt; 60</MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.Md">Inactive/Old</MudHidden>
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4" lg="1">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="@(() => ApplyPreset("Complex"))" FullWidth="true">
+                        Complex
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4" lg="1">
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ClearPreset" FullWidth="true">
+                        Clear
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
         </MudStack>
     </MudPaper>
 
@@ -99,7 +114,9 @@
                       Striped="true"
                       Loading="@_loading"
                       FixedHeader="true"
-                      Height="500px">
+                      Height="500px"
+                      Breakpoint="Breakpoint.Sm"
+                      HorizontalScrollbar="true">
                 <HeaderContent>
                     <MudTh>ID</MudTh>
                     <MudTh>Name</MudTh>

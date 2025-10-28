@@ -2,25 +2,30 @@
 
 <MudPaper Class="pa-4" Elevation="0">
     <MudStack Spacing="3">
-        @* Header *@
-        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-            <MudText Typo="Typo.h6">Filter Builder</MudText>
-            <MudStack Row="true" Spacing="2">
+        @* Header - Responsive Layout *@
+        <MudGrid Spacing="2">
+            <MudItem xs="12" sm="6" md="4" Class="d-flex align-center">
+                <MudText Typo="Typo.h6">Filter Builder</MudText>
+            </MudItem>
+
+            <MudItem xs="12" sm="6" md="8" Class="d-flex align-center justify-end flex-wrap" Style="gap: 8px;">
                 @* Logical Operator Toggle *@
                 @if (Conditions.Count > 1)
                 {
-                    <MudToggleIconButton
-                        Toggled="@IsOrOperator"
-                        ToggledChanged="OnLogicalOperatorChanged"
-                        Icon="@Icons.Material.Filled.LinkOff"
-                        ToggledIcon="@Icons.Material.Filled.Link"
-                        Title="@(IsOrOperator ? "OR (any condition)" : "AND (all conditions)")"
-                        ToggledTitle="@(IsOrOperator ? "OR (any condition)" : "AND (all conditions)")"
-                        Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
-                        ToggledColor="@(IsOrOperator ? Color.Secondary : Color.Primary)" />
-                    <MudChip T="string" Size="Size.Small" Color="@(IsOrOperator ? Color.Secondary : Color.Primary)">
-                        @(IsOrOperator ? "OR" : "AND")
-                    </MudChip>
+                    <div class="d-flex align-center" style="gap: 8px;">
+                        <MudToggleIconButton
+                            Toggled="@IsOrOperator"
+                            ToggledChanged="OnLogicalOperatorChanged"
+                            Icon="@Icons.Material.Filled.LinkOff"
+                            ToggledIcon="@Icons.Material.Filled.Link"
+                            Title="@(IsOrOperator ? "OR (any condition)" : "AND (all conditions)")"
+                            ToggledTitle="@(IsOrOperator ? "OR (any condition)" : "AND (all conditions)")"
+                            Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
+                            ToggledColor="@(IsOrOperator ? Color.Secondary : Color.Primary)" />
+                        <MudChip T="string" Size="Size.Small" Color="@(IsOrOperator ? Color.Secondary : Color.Primary)">
+                            @(IsOrOperator ? "OR" : "AND")
+                        </MudChip>
+                    </div>
                 }
 
                 @* Add Condition Button *@
@@ -30,7 +35,8 @@
                            Size="Size.Small"
                            OnClick="AddCondition"
                            Disabled="@(FilterableProperties == null || !FilterableProperties.Any())">
-                    Add Filter
+                    <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">Add Filter</MudHidden>
+                    <MudHidden Breakpoint="Breakpoint.Xs">Add</MudHidden>
                 </MudButton>
 
                 @* Clear All Button *@
@@ -41,11 +47,12 @@
                                Variant="Variant.Outlined"
                                Size="Size.Small"
                                OnClick="ClearAll">
-                        Clear All
+                        <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">Clear All</MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.Xs">Clear</MudHidden>
                     </MudButton>
                 }
-            </MudStack>
-        </MudStack>
+            </MudItem>
+        </MudGrid>
 
         @* Conditions *@
         @if (!Conditions.Any())
