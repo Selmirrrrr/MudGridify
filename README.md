@@ -21,6 +21,7 @@ A powerful, type-safe Blazor component library that provides a dynamic filter bu
 - **Real-Time Query Generation**: Live preview of generated Gridify query string
 - **Copy to Clipboard**: Quick copy functionality for generated queries
 - **Programmatic Control**: Set conditions, add/remove filters, and get query strings programmatically
+- **URL Persistence**: Built-in parser utility for shareable, bookmarkable filter states via URL parameters
 - **Fully Responsive**: Optimized layouts for mobile, tablet, and desktop screens
   - Adaptive grid layouts with proper breakpoints (xs, sm, md, lg)
   - Mobile-friendly button labels that shorten on small screens
@@ -179,6 +180,175 @@ _filterBuilder.SetConditions(new List<FilterCondition>
 _filterBuilder.AddCondition(new FilterCondition { ... });
 ```
 
+## URL Persistence
+
+MudGridify supports URL persistence through the `GridifyQueryParser` utility, enabling shareable, bookmarkable filter states. This feature follows the **application developer responsibility pattern** - the component remains pure and routing-agnostic, while providing the tools you need to integrate URL persistence.
+
+### Benefits
+
+- **📤 Shareable**: Copy and share URLs with colleagues to show specific filtered views
+- **🔖 Bookmarkable**: Save frequently used filters as browser bookmarks for quick access
+- **⏮️ Browser History**: Use back/forward buttons to navigate through filter states
+- **🔄 Page Refresh**: Filters survive page reload - no state lost on refresh
+
+### GridifyQueryParser Utility
+
+The `GridifyQueryParser` class parses Gridify query strings back into `FilterCondition` objects for state restoration.
+
+**Namespace**: `Selmir.MudGridify.Utilities`
+
+**Method Signature**:
+```csharp
+public static (List<FilterCondition> conditions, bool isOrOperator) Parse(
+    string? gridifyQuery,
+    List<FilterableProperty> filterableProperties)
+```
+
+**Parameters**:
+- `gridifyQuery`: The Gridify query string from URL (e.g., `"FirstName=John,Age>30"`)
+- `filterableProperties`: Your list of filterable properties to resolve references
+
+**Returns**:
+- `conditions`: List of parsed `FilterCondition` objects
+- `isOrOperator`: `true` if OR logic is used (`|` separator), `false` for AND (`,` separator)
+
+### Implementation Example
+
+```razor
+@page "/my-data"
+@inject NavigationManager Navigation
+@using System.Web
+
+<GridifyFilterBuilder @ref="_filterBuilder"
+                      FilterableProperties="@_filterableProperties"
+                      InitialConditions="@_initialConditions"
+                      OnFilterChanged="@OnFilterChanged" />
+
+@code {
+    private GridifyFilterBuilder? _filterBuilder;
+    private List<FilterableProperty> _filterableProperties = new();
+    private List<FilterCondition> _initialConditions = new();
+    private List<MyData> _allData = new();
+    private List<MyData> _filteredData = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // 1. Define filterable properties
+        _filterableProperties = new List<FilterableProperty>
+        {
+            new("Name", "Name", FilterPropertyType.String),
+            new("Price", "Price", FilterPropertyType.Number),
+            new("CreatedDate", "Created", FilterPropertyType.Date)
+        };
+
+        // 2. Load data
+        _allData = await GetDataAsync();
+        _filteredData = _allData;
+
+        // 3. Parse URL parameters to restore filter state
+        await LoadFiltersFromUrl();
+    }
+
+    private async Task LoadFiltersFromUrl()
+    {
+        try
+        {
+            var uri = new Uri(Navigation.Uri);
+            var queryString = HttpUtility.ParseQueryString(uri.Query);
+            var filterParam = queryString["filter"];
+
+            if (!string.IsNullOrEmpty(filterParam))
+            {
+                // Parse Gridify query back into FilterConditions
+                var (conditions, isOrOperator) = GridifyQueryParser.Parse(
+                    filterParam,
+                    _filterableProperties
+                );
+
+                if (conditions.Any())
+                {
+                    _initialConditions = conditions;
+
+                    // Apply filter to data immediately
+                    var query = _allData.AsQueryable();
+                    _filteredData = query.ApplyFiltering(filterParam).ToList();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle parsing errors gracefully
+            Console.WriteLine($"Error parsing URL filters: {ex.Message}");
+        }
+    }
+
+    private async Task OnFilterChanged(string filterQuery)
+    {
+        // Update URL with new filter (without page reload)
+        UpdateUrl(filterQuery);
+
+        // Apply filter to data
+        if (string.IsNullOrWhiteSpace(filterQuery))
+        {
+            _filteredData = new List<MyData>(_allData);
+        }
+        else
+        {
+            var query = _allData.AsQueryable();
+            _filteredData = query.ApplyFiltering(filterQuery).ToList();
+        }
+    }
+
+    private void UpdateUrl(string filterQuery)
+    {
+        var uri = new Uri(Navigation.Uri);
+        var baseUrl = $"{uri.Scheme}://{uri.Authority}{uri.AbsolutePath}";
+
+        if (string.IsNullOrWhiteSpace(filterQuery))
+        {
+            // Clear filter from URL
+            Navigation.NavigateTo(baseUrl, forceLoad: false, replace: true);
+        }
+        else
+        {
+            // Add/update filter query parameter
+            var encodedFilter = Uri.EscapeDataString(filterQuery);
+            var newUrl = $"{baseUrl}?filter={encodedFilter}";
+            Navigation.NavigateTo(newUrl, forceLoad: false, replace: true);
+        }
+    }
+}
+```
+
+### Key Implementation Points
+
+1. **Parse on Init**: Use `GridifyQueryParser.Parse()` in `OnInitializedAsync` to read URL state
+2. **Pass to Component**: Set `InitialConditions` parameter with parsed conditions
+3. **Update URL**: Call `NavigationManager.NavigateTo()` with `forceLoad: false, replace: true` to update URL without reload
+4. **URL Encoding**: Always use `Uri.EscapeDataString()` when adding filter to URL
+5. **Error Handling**: Wrap parsing in try-catch to handle malformed or invalid URLs gracefully
+
+### URL Format
+
+The URL structure follows this pattern:
+```
+https://example.com/page?filter=FirstName%3DJohn%2CAge%3E30
+```
+
+Where `filter` parameter contains the URL-encoded Gridify query string.
+
+### Browser History Support
+
+Using `NavigationManager.NavigateTo()` with `replace: true` updates the current history entry. To add new history entries (enabling back/forward navigation), use `replace: false`:
+
+```csharp
+Navigation.NavigateTo(newUrl, forceLoad: false, replace: false);
+```
+
+### Live Demo
+
+See the **URL Persistence** page in the [playground application](#running-the-playground) for a working example with shareable links, browser history support, and detailed implementation notes.
+
 ## Running the Playground
 
 ```bash
@@ -194,6 +364,7 @@ Navigate to `http://localhost:5259` to see the component in action.
 2. **Employee Filter**: Filter employees by name, department, salary, age, hire date, and status
 3. **Product Filter**: Filter products by name, category, price, stock, and availability
 4. **Advanced Demo**: Quick filter presets, statistics, and programmatic control examples
+5. **URL Persistence**: Shareable filters, bookmarks, browser history, and URL integration patterns
 
 ## Gridify Query Examples
 
