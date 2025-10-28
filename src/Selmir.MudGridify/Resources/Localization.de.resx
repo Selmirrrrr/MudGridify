@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Filter Builder -->
+  <data name="FilterBuilder_Title" xml:space="preserve">
+    <value>Filter-Builder</value>
+  </data>
+  <data name="FilterBuilder_AddFilter" xml:space="preserve">
+    <value>Filter hinzufügen</value>
+  </data>
+  <data name="FilterBuilder_AddFilterShort" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="FilterBuilder_ClearAll" xml:space="preserve">
+    <value>Alle löschen</value>
+  </data>
+  <data name="FilterBuilder_ClearAllShort" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="FilterBuilder_NoFilters" xml:space="preserve">
+    <value>Keine Filter angewendet. Klicken Sie auf "Filter hinzufügen", um eine Bedingung hinzuzufügen.</value>
+  </data>
+  <data name="FilterBuilder_GeneratedQuery" xml:space="preserve">
+    <value>Generierte Gridify-Abfrage:</value>
+  </data>
+  <data name="FilterBuilder_LogicalAnd" xml:space="preserve">
+    <value>UND</value>
+  </data>
+  <data name="FilterBuilder_LogicalOr" xml:space="preserve">
+    <value>ODER</value>
+  </data>
+  <data name="FilterBuilder_LogicalAndTooltip" xml:space="preserve">
+    <value>UND (alle Bedingungen)</value>
+  </data>
+  <data name="FilterBuilder_LogicalOrTooltip" xml:space="preserve">
+    <value>ODER (jede Bedingung)</value>
+  </data>
+
+  <!-- Filter Condition Row -->
+  <data name="FilterCondition_Property" xml:space="preserve">
+    <value>Eigenschaft</value>
+  </data>
+  <data name="FilterCondition_Operator" xml:space="preserve">
+    <value>Operator</value>
+  </data>
+  <data name="FilterCondition_Value" xml:space="preserve">
+    <value>Wert</value>
+  </data>
+  <data name="FilterCondition_CaseInsensitive" xml:space="preserve">
+    <value>Groß-/Kleinschreibung</value>
+  </data>
+  <data name="FilterCondition_CaseInsensitiveTooltip" xml:space="preserve">
+    <value>Groß-/Kleinschreibung ignorieren</value>
+  </data>
+  <data name="FilterCondition_Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+
+  <!-- Filter Operators -->
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>Gleich</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>Ungleich</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>Größer als</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>Kleiner als</value>
+  </data>
+  <data name="Operator_GreaterOrEqual" xml:space="preserve">
+    <value>Größer oder gleich</value>
+  </data>
+  <data name="Operator_LessOrEqual" xml:space="preserve">
+    <value>Kleiner oder gleich</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>Enthält</value>
+  </data>
+  <data name="Operator_NotContains" xml:space="preserve">
+    <value>Enthält nicht</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>Beginnt mit</value>
+  </data>
+  <data name="Operator_NotStartsWith" xml:space="preserve">
+    <value>Beginnt nicht mit</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>Endet mit</value>
+  </data>
+  <data name="Operator_NotEndsWith" xml:space="preserve">
+    <value>Endet nicht mit</value>
+  </data>
+
+  <!-- Boolean Values -->
+  <data name="Boolean_True" xml:space="preserve">
+    <value>Wahr</value>
+  </data>
+  <data name="Boolean_False" xml:space="preserve">
+    <value>Falsch</value>
+  </data>
+</root>

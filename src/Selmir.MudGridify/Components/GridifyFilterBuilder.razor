@@ -1,11 +1,13 @@
 @using Selmir.MudGridify.Models
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resources.Localization> L
 
 <MudPaper Class="pa-4" Elevation="0">
     <MudStack Spacing="3">
         @* Header - Responsive Layout *@
         <MudGrid Spacing="2">
             <MudItem xs="12" sm="6" md="4" Class="d-flex align-center">
-                <MudText Typo="Typo.h6">Filter Builder</MudText>
+                <MudText Typo="Typo.h6">@L["FilterBuilder_Title"]</MudText>
             </MudItem>
 
             <MudItem xs="12" sm="6" md="8" Class="d-flex align-center justify-end flex-wrap" Style="gap: 8px;">
@@ -18,12 +20,12 @@
                             ToggledChanged="OnLogicalOperatorChanged"
                             Icon="@Icons.Material.Filled.LinkOff"
                             ToggledIcon="@Icons.Material.Filled.Link"
-                            Title="@(IsOrOperator ? "OR (any condition)" : "AND (all conditions)")"
-                            ToggledTitle="@(IsOrOperator ? "OR (any condition)" : "AND (all conditions)")"
+                            Title="@(IsOrOperator ? L["FilterBuilder_LogicalOrTooltip"] : L["FilterBuilder_LogicalAndTooltip"])"
+                            ToggledTitle="@(IsOrOperator ? L["FilterBuilder_LogicalOrTooltip"] : L["FilterBuilder_LogicalAndTooltip"])"
                             Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
                             ToggledColor="@(IsOrOperator ? Color.Secondary : Color.Primary)" />
                         <MudChip T="string" Size="Size.Small" Color="@(IsOrOperator ? Color.Secondary : Color.Primary)">
-                            @(IsOrOperator ? "OR" : "AND")
+                            @(IsOrOperator ? L["FilterBuilder_LogicalOr"] : L["FilterBuilder_LogicalAnd"])
                         </MudChip>
                     </div>
                 }
@@ -35,8 +37,8 @@
                            Size="Size.Small"
                            OnClick="AddCondition"
                            Disabled="@(FilterableProperties == null || !FilterableProperties.Any())">
-                    <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">Add Filter</MudHidden>
-                    <MudHidden Breakpoint="Breakpoint.Xs">Add</MudHidden>
+                    <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">@L["FilterBuilder_AddFilter"]</MudHidden>
+                    <MudHidden Breakpoint="Breakpoint.Xs">@L["FilterBuilder_AddFilterShort"]</MudHidden>
                 </MudButton>
 
                 @* Clear All Button *@
@@ -47,8 +49,8 @@
                                Variant="Variant.Outlined"
                                Size="Size.Small"
                                OnClick="ClearAll">
-                        <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">Clear All</MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.Xs">Clear</MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">@L["FilterBuilder_ClearAll"]</MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.Xs">@L["FilterBuilder_ClearAllShort"]</MudHidden>
                     </MudButton>
                 }
             </MudItem>
@@ -58,7 +60,7 @@
         @if (!Conditions.Any())
         {
             <MudAlert Severity="Severity.Info" Dense="true">
-                No filters applied. Click "Add Filter" to add a condition.
+                @L["FilterBuilder_NoFilters"]
             </MudAlert>
         }
         else
@@ -78,7 +80,7 @@
             <MudPaper Class="pa-3" Outlined="true">
                 <MudStack Spacing="2">
                     <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                        <MudText Typo="Typo.subtitle2" Color="Color.Primary">Generated Gridify Query:</MudText>
+                        <MudText Typo="Typo.subtitle2" Color="Color.Primary">@L["FilterBuilder_GeneratedQuery"]</MudText>
                         <MudIconButton Icon="@Icons.Material.Filled.ContentCopy"
                                        Size="Size.Small"
                                        OnClick="CopyToClipboard"

@@ -5,7 +5,7 @@
         @* Property Selection *@
         <MudItem xs="12" sm="12" md="3" lg="3">
             <MudSelect T="FilterableProperty"
-                       Label="Property"
+                       Label="@L["FilterCondition_Property"]"
                        Value="Condition.Property"
                        ValueChanged="OnPropertyChanged"
                        Variant="Variant.Outlined"
@@ -21,7 +21,7 @@
         @* Operator Selection *@
         <MudItem xs="12" sm="6" md="3" lg="2">
             <MudSelect T="Models.FilterOperator"
-                       Label="Operator"
+                       Label="@L["FilterCondition_Operator"]"
                        Value="Condition.Operator"
                        ValueChanged="OnOperatorChanged"
                        Variant="Variant.Outlined"
@@ -32,7 +32,7 @@
                 {
                     foreach (var op in FilterOperatorExtensions.GetOperatorsForType(Condition.Property.PropertyType))
                     {
-                        <MudSelectItem Value="@op">@op.GetDisplayName()</MudSelectItem>
+                        <MudSelectItem Value="@op">@op.GetDisplayName(L)</MudSelectItem>
                     }
                 }
             </MudSelect>
@@ -46,7 +46,7 @@
                 {
                     case FilterPropertyType.String:
                         <MudTextField T="string"
-                                      Label="Value"
+                                      Label="@L["FilterCondition_Value"]"
                                       Value="Condition.Value"
                                       ValueChanged="OnValueChanged"
                                       Variant="Variant.Outlined"
@@ -55,7 +55,7 @@
 
                     case FilterPropertyType.Number:
                         <MudNumericField T="double?"
-                                         Label="Value"
+                                         Label="@L["FilterCondition_Value"]"
                                          Value="@GetNumericValue()"
                                          ValueChanged="@((double? val) => OnNumericValueChanged(val))"
                                          Variant="Variant.Outlined"
@@ -64,18 +64,18 @@
 
                     case FilterPropertyType.Boolean:
                         <MudSelect T="string"
-                                   Label="Value"
+                                   Label="@L["FilterCondition_Value"]"
                                    Value="Condition.Value"
                                    ValueChanged="OnValueChanged"
                                    Variant="Variant.Outlined"
                                    Dense="true">
-                            <MudSelectItem Value="@("true")">@(Condition.Property.TrueLabel ?? "True")</MudSelectItem>
-                            <MudSelectItem Value="@("false")">@(Condition.Property.FalseLabel ?? "False")</MudSelectItem>
+                            <MudSelectItem Value="@("true")">@(Condition.Property.TrueLabel ?? L["Boolean_True"])</MudSelectItem>
+                            <MudSelectItem Value="@("false")">@(Condition.Property.FalseLabel ?? L["Boolean_False"])</MudSelectItem>
                         </MudSelect>
                         break;
 
                     case FilterPropertyType.Date:
-                        <MudDatePicker Label="Value"
+                        <MudDatePicker Label="@L["FilterCondition_Value"]"
                                        Date="@GetDateValue()"
                                        DateChanged="@((DateTime? date) => OnDateChanged(date))"
                                        Variant="Variant.Outlined"
@@ -83,7 +83,7 @@
                         break;
 
                     case FilterPropertyType.DateTime:
-                        <MudDatePicker Label="Value"
+                        <MudDatePicker Label="@L["FilterCondition_Value"]"
                                        Date="@GetDateValue()"
                                        DateChanged="@((DateTime? date) => OnDateTimeChanged(date))"
                                        Variant="Variant.Outlined"
@@ -94,7 +94,7 @@
             else
             {
                 <MudTextField T="string"
-                              Label="Value"
+                              Label="@L["FilterCondition_Value"]"
                               Disabled="true"
                               Variant="Variant.Outlined"
                               Dense="true" />
@@ -106,13 +106,13 @@
             <div class="d-flex align-center">
                 @if (Condition.Property?.PropertyType == FilterPropertyType.String)
                 {
-                    <MudTooltip Text="Case Insensitive Matching">
+                    <MudTooltip Text="@L["FilterCondition_CaseInsensitiveTooltip"]">
                         <MudCheckBox T="bool"
                                      Value="Condition.CaseInsensitive"
                                      ValueChanged="OnCaseInsensitiveChanged"
                                      Color="Color.Primary"
                                      Dense="true"
-                                     Label="Case Insensitive" />
+                                     Label="@L["FilterCondition_CaseInsensitive"]" />
                     </MudTooltip>
                 }
             </div>
@@ -126,6 +126,9 @@
         </MudItem>
     </MudGrid>
 </MudPaper>
+
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resources.Localization> L
 
 @code {
     [Parameter]

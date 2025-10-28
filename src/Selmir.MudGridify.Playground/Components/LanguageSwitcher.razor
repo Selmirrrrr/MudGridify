@@ -1,0 +1,76 @@
+@using System.Globalization
+@implements IDisposable
+
+<MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft">
+    <MudMenuItem OnClick="@(() => SetCulture("en"))">
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+            <MudText>🇬🇧</MudText>
+            <MudText>English</MudText>
+            @if (_currentCulture == "en")
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Color="Color.Success" />
+            }
+        </MudStack>
+    </MudMenuItem>
+    <MudMenuItem OnClick="@(() => SetCulture("fr"))">
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+            <MudText>🇫🇷</MudText>
+            <MudText>Français</MudText>
+            @if (_currentCulture == "fr")
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Color="Color.Success" />
+            }
+        </MudStack>
+    </MudMenuItem>
+    <MudMenuItem OnClick="@(() => SetCulture("it"))">
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+            <MudText>🇮🇹</MudText>
+            <MudText>Italiano</MudText>
+            @if (_currentCulture == "it")
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Color="Color.Success" />
+            }
+        </MudStack>
+    </MudMenuItem>
+    <MudMenuItem OnClick="@(() => SetCulture("de"))">
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+            <MudText>🇩🇪</MudText>
+            <MudText>Deutsch</MudText>
+            @if (_currentCulture == "de")
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Color="Color.Success" />
+            }
+        </MudStack>
+    </MudMenuItem>
+</MudMenu>
+
+@code {
+    private string _currentCulture = "en";
+
+    protected override void OnInitialized()
+    {
+        _currentCulture = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+    }
+
+    private void SetCulture(string culture)
+    {
+        if (_currentCulture == culture)
+            return;
+
+        _currentCulture = culture;
+        var cultureInfo = new CultureInfo(culture);
+        CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+        CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+        // Force page reload to apply new culture
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    public void Dispose()
+    {
+        // Cleanup if needed
+    }
+}
