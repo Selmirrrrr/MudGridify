@@ -1,27 +1,12 @@
-@using Selmir.MudGridify.Models
 @using Microsoft.Extensions.Localization
-@using MudBlazor
 @inject IStringLocalizer<Resources.Localization> L
 
-@*
-    UX IMPROVEMENT: Reduced elevation from 2 to 0, added border and hover effect
-    Better spacing and responsive padding
-*@
 <MudPaper Class="@GetPaperClass()"
           Elevation="0"
           Style="@GetPaperStyle()"
           @onmouseenter="OnMouseEnter"
           @onmouseleave="OnMouseLeave">
     <MudGrid Spacing="2">
-        @*
-            UX IMPROVEMENT: Improved column distribution
-            - Property: xs=12, sm=12, md=4 (more space for longer names)
-            - Operator: xs=12, sm=6, md=3 (adequate for operators)
-            - Value: xs=12, sm=6, md=5 (main input area)
-            - Mobile-first: Each field full width on mobile for better UX
-        *@
-
-        @* Property Selection *@
         <MudItem xs="12" sm="12" md="4">
             <MudSelect T="FilterableProperty"
                        Label="@L["FilterCondition_Property"]"
@@ -38,7 +23,6 @@
             </MudSelect>
         </MudItem>
 
-        @* Operator Selection *@
         <MudItem xs="12" sm="6" md="3">
             <MudSelect T="Models.FilterOperator"
                        Label="@L["FilterCondition_Operator"]"
@@ -59,10 +43,6 @@
             </MudSelect>
         </MudItem>
 
-        @*
-            UX IMPROVEMENT: Value input column now includes case-insensitive toggle inline
-            This improves discoverability and reduces layout shifts
-        *@
         <MudItem xs="12" sm="6" md="5">
             @if (Condition.Property != null)
             {
@@ -78,7 +58,6 @@
                                           Dense="true"
                                           aria-label="@L["FilterCondition_ValueAriaLabel"]"
                                           Immediate="false" />
-                            @* UX IMPROVEMENT: Case-insensitive toggle now appears as adornment icon *@
                             <div style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); z-index: 1;">
                                 <MudTooltip Text="@L["FilterCondition_CaseInsensitiveTooltip"]" Placement="Placement.Top">
                                     <MudIconButton Icon="@(Condition.CaseInsensitive ? Icons.Material.Filled.TextFields : Icons.Material.Outlined.TextFields)"
@@ -158,11 +137,6 @@
             }
         </MudItem>
 
-        @*
-            UX IMPROVEMENT: Actions column simplified - only delete button
-            Larger touch target, better mobile experience
-            Case-insensitive moved to value field inline
-        *@
         <MudItem xs="12" sm="12" md="12" Class="d-flex align-center justify-end">
             <MudTooltip Text="@L["FilterCondition_RemoveTooltip"]" Placement="Placement.Top">
                 <MudButton StartIcon="@Icons.Material.Filled.Delete"
@@ -180,7 +154,6 @@
     </MudGrid>
 </MudPaper>
 
-@* UX IMPROVEMENT: Added CSS for smooth transitions and hover effects *@
 <style>
     .filter-row-paper {
         transition: all 0.2s ease-in-out;
@@ -221,15 +194,9 @@
     [Parameter]
     public EventCallback OnRemoveRequested { get; set; }
 
-    /// <summary>
-    /// UX IMPROVEMENT: New parameter to control remove button state
-    /// </summary>
     [Parameter]
     public bool CanRemove { get; set; } = true;
 
-    /// <summary>
-    /// UX IMPROVEMENT: Track hover state for enhanced visual feedback
-    /// </summary>
     private bool IsHovering { get; set; }
 
     private string GetPaperClass()
@@ -270,7 +237,6 @@
     {
         Condition.Property = property;
 
-        // Reset operator to first available for this type
         if (property != null)
         {
             var operators = FilterOperatorExtensions.GetOperatorsForType(property.PropertyType);
@@ -314,9 +280,6 @@
         await OnConditionChanged.InvokeAsync();
     }
 
-    /// <summary>
-    /// UX IMPROVEMENT: Simplified toggle method
-    /// </summary>
     private async Task ToggleCaseInsensitive()
     {
         Condition.CaseInsensitive = !Condition.CaseInsensitive;

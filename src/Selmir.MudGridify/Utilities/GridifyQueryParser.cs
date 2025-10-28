@@ -100,7 +100,6 @@ public static class GridifyQueryParser
 
         return new FilterCondition
         {
-            Id = Guid.NewGuid(),
             Property = property,
             Operator = filterOperator.Value,
             Value = parsedValue,

@@ -103,8 +103,8 @@ public static class FilterOperatorExtensions
     {
         return type switch
         {
-            FilterPropertyType.String => new[]
-            {
+            FilterPropertyType.String =>
+            [
                 FilterOperator.Equals,
                 FilterOperator.NotEquals,
                 FilterOperator.Contains,
@@ -113,22 +113,22 @@ public static class FilterOperatorExtensions
                 FilterOperator.NotStartsWith,
                 FilterOperator.EndsWith,
                 FilterOperator.NotEndsWith
-            },
-            FilterPropertyType.Number or FilterPropertyType.Date or FilterPropertyType.DateTime => new[]
-            {
+            ],
+            FilterPropertyType.Number or FilterPropertyType.Date or FilterPropertyType.DateTime =>
+            [
                 FilterOperator.Equals,
                 FilterOperator.NotEquals,
                 FilterOperator.GreaterThan,
                 FilterOperator.LessThan,
                 FilterOperator.GreaterOrEqual,
                 FilterOperator.LessOrEqual
-            },
-            FilterPropertyType.Boolean => new[]
-            {
+            ],
+            FilterPropertyType.Boolean =>
+            [
                 FilterOperator.Equals,
                 FilterOperator.NotEquals
-            },
-            _ => new[] { FilterOperator.Equals, FilterOperator.NotEquals }
+            ],
+            _ => [FilterOperator.Equals, FilterOperator.NotEquals]
         };
     }
 }

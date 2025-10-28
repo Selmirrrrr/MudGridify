@@ -6,11 +6,6 @@ namespace Selmir.MudGridify.Models;
 public class FilterCondition
 {
     /// <summary>
-    /// Unique identifier for this condition
-    /// </summary>
-    public Guid Id { get; set; } = Guid.NewGuid();
-
-    /// <summary>
     /// The property being filtered
     /// </summary>
     public FilterableProperty? Property { get; set; }

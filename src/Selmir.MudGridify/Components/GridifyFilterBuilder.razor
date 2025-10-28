@@ -1,24 +1,11 @@
-@using Selmir.MudGridify.Models
 @using Microsoft.Extensions.Localization
-@using MudBlazor
 @inject IStringLocalizer<Resources.Localization> L
 
-@*
-    UX IMPROVEMENT: Changed from Elevation="0" to Elevation="1" for subtle depth
-    Added soft border for better definition without being heavy
-*@
 <MudPaper Class="pa-4 pa-sm-5" Elevation="1" Style="border: 1px solid var(--mud-palette-divider);">
     <MudStack Spacing="4">
-        @*
-            UX IMPROVEMENT: Enhanced header with clearer visual hierarchy
-            - Title now has subtitle for context
-            - Actions grouped with better spacing and order
-        *@
         <MudStack Spacing="2">
             <div class="d-flex justify-space-between align-center flex-wrap" style="gap: 12px;">
-                <div>
                     <MudText Typo="Typo.h6" Class="mb-1">@L["FilterBuilder_Title"]</MudText>
-                    @* UX IMPROVEMENT: Added subtitle for context and guidance *@
                     <MudText Typo="Typo.body2" Color="Color.Tertiary">
                         @if (Conditions.Any())
                         {
@@ -29,9 +16,7 @@
                             @L["FilterBuilder_NoFiltersDescription"]
                         }
                     </MudText>
-                </div>
 
-                @* UX IMPROVEMENT: Action buttons with clearer hierarchy and grouping *@
                 <div class="d-flex align-center flex-wrap" style="gap: 8px;">
                     <MudButton StartIcon="@Icons.Material.Filled.Add"
                                Color="Color.Primary"
@@ -44,7 +29,6 @@
                         <MudHidden Breakpoint="Breakpoint.SmAndDown">@L["FilterBuilder_AddFilter"]</MudHidden>
                     </MudButton>
 
-                    @* UX IMPROVEMENT: Clear button now uses Text variant for secondary action hierarchy *@
                     @if (Conditions.Any())
                     {
                         <MudButton StartIcon="@Icons.Material.Filled.Clear"
@@ -60,13 +44,6 @@
                 </div>
             </div>
 
-            @*
-                UX IMPROVEMENT: Completely redesigned logical operator toggle
-                - Now a prominent, centered chip-style selector
-                - Uses clearer icons and colors
-                - Only shows when relevant (2+ conditions)
-                - Better mobile experience
-            *@
             @if (Conditions.Count > 1)
             {
                 <MudPaper Class="pa-3" Outlined="true" Style="background-color: var(--mud-palette-background-grey);">
@@ -76,7 +53,6 @@
                             @L["FilterBuilder_LogicalOperatorDescription"]
                         </MudText>
 
-                        @* UX IMPROVEMENT: Segmented button-style toggle instead of icon button *@
                         <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small" aria-label="@L["FilterBuilder_LogicalOperatorLabel"]">
                             <MudButton OnClick="@(() => OnLogicalOperatorChanged(false))"
                                        Color="@(!IsOrOperator ? Color.Primary : Color.Default)"
@@ -100,10 +76,6 @@
             }
         </MudStack>
 
-        @*
-            UX IMPROVEMENT: Conditions wrapper with transition container
-            Added visual separator between conditions for clarity
-        *@
         @if (Conditions.Any())
         {
             <MudStack Spacing="3">
@@ -112,17 +84,7 @@
                     var condition = Conditions[i];
                     var index = i;
 
-                    @* UX IMPROVEMENT: Added condition number badge for multi-filter clarity *@
                     <div style="position: relative;">
-                        @if (Conditions.Count > 1)
-                        {
-                            <div style="position: absolute; left: -8px; top: -8px; z-index: 10;">
-                                <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Filled" Style="font-weight: 600;">
-                                    @(index + 1)
-                                </MudChip>
-                            </div>
-                        }
-
                         <FilterConditionRow Condition="@condition"
                                             AvailableProperties="@FilterableProperties"
                                             OnConditionChanged="@(() => OnConditionChanged())"
@@ -149,52 +111,9 @@
                 }
             </MudStack>
         }
-
-        @*
-            UX IMPROVEMENT: Enhanced generated query display
-            - Added accent color border for visual prominence
-            - Improved copy feedback with snackbar
-            - Better visual hierarchy
-        *@
-        @if (ShowGeneratedQuery && !string.IsNullOrWhiteSpace(GeneratedQuery))
-        {
-            <MudPaper Class="pa-4"
-                      Outlined="true"
-                      Style="border: 2px solid var(--mud-palette-primary); background-color: var(--mud-palette-surface);">
-                <MudStack Spacing="2">
-                    <div class="d-flex justify-space-between align-center">
-                        <div class="d-flex align-center" style="gap: 8px;">
-                            <MudIcon Icon="@Icons.Material.Filled.Code" Color="Color.Primary" Size="Size.Small" />
-                            <MudText Typo="Typo.subtitle1" Style="font-weight: 600;" Color="Color.Primary">
-                                @L["FilterBuilder_GeneratedQuery"]
-                            </MudText>
-                        </div>
-
-                        @* UX IMPROVEMENT: Enhanced copy button with better feedback *@
-                        <MudTooltip Text="@CopyButtonTooltip">
-                            <MudIconButton Icon="@(IsCopied ? Icons.Material.Filled.Check : Icons.Material.Filled.ContentCopy)"
-                                           Size="Size.Small"
-                                           Color="@(IsCopied ? Color.Success : Color.Default)"
-                                           OnClick="CopyToClipboard"
-                                           aria-label="@L["FilterBuilder_CopyToClipboard"]" />
-                        </MudTooltip>
-                    </div>
-
-                    @* UX IMPROVEMENT: Better query display with syntax highlighting background *@
-                    <MudTextField T="string"
-                                  Value="@GeneratedQuery"
-                                  ReadOnly="true"
-                                  Variant="Variant.Filled"
-                                  Lines="3"
-                                  Class="mud-input-monospace"
-                                  aria-label="@L["FilterBuilder_GeneratedQueryField"]" />
-                </MudStack>
-            </MudPaper>
-        }
     </MudStack>
 </MudPaper>
 
-@* UX IMPROVEMENT: Added CSS for smooth transitions and better monospace styling *@
 <style>
     .mud-input-monospace input,
     .mud-input-monospace textarea {
@@ -203,17 +122,14 @@
         line-height: 1.5;
     }
 
-    /* Smooth transitions for dynamic elements */
     .mud-button-group .mud-button {
         transition: all 0.2s ease-in-out;
     }
 
-    /* Enhance chip animations */
     .mud-chip {
         transition: all 0.2s ease-in-out;
     }
 
-    /* Smooth hover states for papers */
     .mud-paper {
         transition: box-shadow 0.2s ease-in-out;
     }
@@ -258,22 +174,6 @@
     /// The generated Gridify query string
     /// </summary>
     public string GeneratedQuery { get; private set; } = string.Empty;
-
-    /// <summary>
-    /// UX IMPROVEMENT: Track copy state for visual feedback
-    /// </summary>
-    private bool IsCopied { get; set; }
-
-    /// <summary>
-    /// UX IMPROVEMENT: Dynamic tooltip text for copy button
-    /// </summary>
-    private string CopyButtonTooltip => IsCopied ? L["FilterBuilder_Copied"] : L["FilterBuilder_CopyToClipboard"];
-
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-
-    [Inject]
-    private ISnackbar? Snackbar { get; set; }
 
     protected override void OnInitialized()
     {
@@ -359,30 +259,6 @@
 
         // Notify parent component
         OnFilterChanged.InvokeAsync(GeneratedQuery);
-    }
-
-    /// <summary>
-    /// UX IMPROVEMENT: Enhanced copy with visual feedback and timeout
-    /// </summary>
-    private async Task CopyToClipboard()
-    {
-        try
-        {
-            await JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", GeneratedQuery);
-            IsCopied = true;
-
-            // Show success snackbar
-            Snackbar?.Add(L["FilterBuilder_CopySuccess"], Severity.Success);
-
-            // Reset icon after 2 seconds
-            await Task.Delay(2000);
-            IsCopied = false;
-            StateHasChanged();
-        }
-        catch
-        {
-            Snackbar?.Add(L["FilterBuilder_CopyError"], Severity.Error);
-        }
     }
 
     /// <summary>
