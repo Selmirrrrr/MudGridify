@@ -12,31 +12,6 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="Selmir.MudGridify.Playground.styles.css" rel="stylesheet" />
-    <script>
-        // Remove integrity attributes to prevent SRI failures with GitHub Pages Brotli compression
-        // This must run before other scripts load
-        (function() {
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.addedNodes.length) {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.integrity) {
-                                node.removeAttribute('integrity');
-                            }
-                        });
-                    }
-                });
-            });
-            observer.observe(document.documentElement, {
-                subtree: true,
-                childList: true
-            });
-            // Also remove from existing elements
-            document.querySelectorAll('[integrity]').forEach(el => {
-                el.removeAttribute('integrity');
-            });
-        })();
-    </script>
     <script type="importmap"></script>
 </head>
 

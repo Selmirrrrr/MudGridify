@@ -33,8 +33,17 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
+    - name: Build playground
+      run: dotnet build src/Selmir.MudGridify.Playground/Selmir.MudGridify.Playground.csproj --configuration Release --no-restore
+
     - name: Publish playground
-      run: dotnet publish src/Selmir.MudGridify.Playground/Selmir.MudGridify.Playground.csproj --configuration Release --output ./publish
+      run: dotnet publish src/Selmir.MudGridify.Playground/Selmir.MudGridify.Playground.csproj --configuration Release --no-build --output ./publish
+
+    - name: Fix service worker path
+      run: |
+        # GitHub Pages serves from repository root or /repository-name/
+        # We need to update the service worker base path
+        sed -i 's|"base": "/"|"base": "/MudGridify/"|g' ./publish/appsettings.json || true
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
