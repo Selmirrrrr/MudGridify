@@ -11,8 +11,8 @@
     <Version>1.0.0</Version>
     <Authors>Selmir</Authors>
     <Description>A Blazor component library that provides a dynamic, type-safe filter builder UI for Gridify (dynamic LINQ filtering library), built with MudBlazor.</Description>
-    <PackageProjectUrl>https://github.com/yourusername/MudGridify</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/yourusername/MudGridify</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/selmirrrrr/MudGridify</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/selmirrrrr/MudGridify</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>blazor;filter;gridify;mudblazor;linq;dynamic;filtering</PackageTags>
