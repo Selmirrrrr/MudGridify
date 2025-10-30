@@ -1,0 +1,55 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build playground
+      run: dotnet build src/Selmir.MudGridify.Playground/Selmir.MudGridify.Playground.csproj --configuration Release --no-restore
+
+    - name: Publish playground
+      run: dotnet publish src/Selmir.MudGridify.Playground/Selmir.MudGridify.Playground.csproj --configuration Release --no-build --output ./publish
+
+    - name: Fix service worker path
+      run: |
+        # GitHub Pages serves from repository root or /repository-name/
+        # We need to update the service worker base path
+        sed -i 's|"base": "/"|"base": "/MudGridify/"|g' ./publish/appsettings.json || true
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './publish/wwwroot'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
