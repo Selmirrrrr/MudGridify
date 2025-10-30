@@ -1,8 +1,9 @@
 @using System.Globalization
-@implements IDisposable
+@using Selmir.MudGridify.Playground.Services
+@inject ICultureService CultureService
 
 <MudMenu Icon="@Icons.Material.Filled.Language" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft">
-    <MudMenuItem OnClick="@(() => SetCulture("en"))">
+    <MudMenuItem OnClick="@(() => SetCultureAsync("en"))">
         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
             <MudText>🇬🇧</MudText>
             <MudText>English</MudText>
@@ -12,7 +13,7 @@
             }
         </MudStack>
     </MudMenuItem>
-    <MudMenuItem OnClick="@(() => SetCulture("fr"))">
+    <MudMenuItem OnClick="@(() => SetCultureAsync("fr"))">
         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
             <MudText>🇫🇷</MudText>
             <MudText>Français</MudText>
@@ -22,7 +23,7 @@
             }
         </MudStack>
     </MudMenuItem>
-    <MudMenuItem OnClick="@(() => SetCulture("it"))">
+    <MudMenuItem OnClick="@(() => SetCultureAsync("it"))">
         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
             <MudText>🇮🇹</MudText>
             <MudText>Italiano</MudText>
@@ -32,7 +33,7 @@
             }
         </MudStack>
     </MudMenuItem>
-    <MudMenuItem OnClick="@(() => SetCulture("de"))">
+    <MudMenuItem OnClick="@(() => SetCultureAsync("de"))">
         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
             <MudText>🇩🇪</MudText>
             <MudText>Deutsch</MudText>
@@ -47,30 +48,26 @@
 @code {
     private string _currentCulture = "en";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        // Get the current culture from the browser's culture
         _currentCulture = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
+        // Ensure we have a valid culture (fallback to English if not one of our supported cultures)
+        if (_currentCulture != "en" && _currentCulture != "fr" && _currentCulture != "it" && _currentCulture != "de")
+        {
+            _currentCulture = "en";
+        }
     }
 
-    private void SetCulture(string culture)
+    private async Task SetCultureAsync(string culture)
     {
         if (_currentCulture == culture)
             return;
 
         _currentCulture = culture;
-        var cultureInfo = new CultureInfo(culture);
-        CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-        CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
-        // Force page reload to apply new culture
-        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
-    }
-
-    [Inject]
-    private NavigationManager Navigation { get; set; } = default!;
-
-    public void Dispose()
-    {
-        // Cleanup if needed
+        // This will save the culture to localStorage and reload the page
+        await CultureService.SetCultureAsync(culture);
     }
 }

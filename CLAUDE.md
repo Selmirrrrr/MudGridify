@@ -114,6 +114,7 @@ Components use MudGrid with responsive column specs (e.g., `xs="12" md="4"`). Bu
 - **MudBlazor 8.13.0** (Material Design components)
 - **Gridify 2.17.0** (dynamic LINQ filtering)
 - **Microsoft.Extensions.Localization 10.0.0-rc.2** (multi-language support)
+- **Blazored.LocalStorage 4.5.0** (localStorage access for Blazor)
 
 ## Important Configuration
 
@@ -146,10 +147,38 @@ The GridifyFilterBuilder uses EventCallback pattern:
 - Component invokes it with generated query string whenever filters change
 - Parent applies filter to data using Gridify's `ApplyFiltering(query)`
 
-## Known Limitations
+## Localization Implementation
 
-### Localization Runtime Issue
-The localization infrastructure is complete (resource files, satellite assemblies, IStringLocalizer injection), but translations are not applying at runtime in Blazor WASM. The UI remains in English after language switching despite satellite resource DLLs being generated correctly. This may require additional Blazor WASM-specific configuration for proper satellite assembly loading.
+### Culture Persistence in Blazor WASM
+The application supports runtime language switching with proper culture persistence using Blazored.LocalStorage:
+
+1. **LocalStorage Integration**:
+   - Uses **Blazored.LocalStorage** NuGet package for type-safe localStorage access
+   - Eliminates need for custom JavaScript modules
+   - Provides async methods for reading/writing culture preferences
+
+2. **Startup Configuration** (`wwwroot/index.html`):
+   - Uses `autostart="false"` for manual Blazor initialization
+   - Inline JavaScript reads saved culture from localStorage
+   - Passes `applicationCulture` to `Blazor.start()`
+
+3. **Culture Service** (`Services/CultureService.cs`):
+   - Provides .NET interface for culture management
+   - Uses `ILocalStorageService` from Blazored.LocalStorage
+   - Handles culture switching with page reload via JSInterop
+
+4. **Language Switcher** (`Components/LanguageSwitcher.razor`):
+   - Visual UI for language selection with flag icons
+   - Uses `ICultureService` to persist and apply culture changes
+   - Displays current culture with checkmark indicator
+   - Supports English, French, Italian, and German
+
+5. **Program Configuration** (`Program.cs`):
+   - Registers `AddBlazoredLocalStorage()` service
+   - Registers custom `ICultureService` implementation
+   - Ensures culture is properly set from Blazor startup
+
+This implementation ensures that culture selection persists across page reloads and browser sessions, properly loading localized resources from satellite assemblies.
 
 ## File Naming Conventions
 
