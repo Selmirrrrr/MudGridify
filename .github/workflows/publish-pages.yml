@@ -1,4 +1,4 @@
-name: Publish GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -7,46 +7,28 @@ on:
       - master
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Setup .NET
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Install .NET WebAssembly Tools
+      run: dotnet workload install wasm-tools
 
-    - name: Build and Publish
-      run: dotnet publish src/Selmir.MudGridify.Playground/Selmir.MudGridify.Playground.csproj --configuration Release --output ./publish
-
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: './publish/wwwroot'
+    - name: Publish with GitHub Pages Support
+      run: dotnet publish src/Selmir.MudGridify.Playground/Selmir.MudGridify.Playground.csproj -c:Release -o:publish -p:GHPages=true
 
     - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: publish/wwwroot
+        force_orphan: true

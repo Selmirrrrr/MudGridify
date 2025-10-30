@@ -6,8 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
-    <!-- Disable Brotli compression for GitHub Pages compatibility -->
-    <BlazorEnableCompression>false</BlazorEnableCompression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0-rc.2.25502.107" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0-rc.2.25502.107" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="8.13.0" />
+    <PackageReference Include="PublishSPAforGitHubPages.Build" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
