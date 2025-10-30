@@ -1,0 +1,123 @@
+/* _content/Selmir.MudGridify/Components/FilterConditionRow.razor.rz.scp.css */
+.filter-row-paper[b-u7z4rtr4zu] {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--mud-palette-divider);
+    background-color: var(--mud-palette-surface);
+    position: relative;
+}
+
+.remove-button-container[b-u7z4rtr4zu] {
+    position: relative;
+}
+
+.remove-button[b-u7z4rtr4zu] {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.filter-row-paper:hover .remove-button[b-u7z4rtr4zu],
+.filter-row-paper:focus-within .remove-button[b-u7z4rtr4zu] {
+    opacity: 1;
+}
+
+.filter-row-paper:hover[b-u7z4rtr4zu] {
+    box-shadow: 0 2px 12px rgba(var(--mud-palette-primary-rgb), 0.15);
+    border-color: var(--mud-palette-primary);
+    transform: translateY(-1px);
+}
+
+.filter-row-paper.is-hovering[b-u7z4rtr4zu] {
+    transform: translateY(-1px);
+}
+
+/* Enhanced input focus states */
+.filter-row-paper:focus-within[b-u7z4rtr4zu] {
+    box-shadow: 0 0 0 3px rgba(var(--mud-palette-primary-rgb), 0.2);
+    border-color: var(--mud-palette-primary);
+}
+
+.mud-input-control[b-u7z4rtr4zu] {
+    transition: all 0.2s ease-in-out;
+}
+
+.mud-input-control:focus-within[b-u7z4rtr4zu] {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Smooth checkbox toggle animation */
+.mud-checkbox[b-u7z4rtr4zu] {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Icon button hover effect */
+.mud-icon-button[b-u7z4rtr4zu] {
+    transition: all 0.2s ease-in-out;
+}
+/* _content/Selmir.MudGridify/Components/GridifyFilterBuilder.razor.rz.scp.css */
+/* Filter Builder Panel Styling */
+.filter-builder-panel[b-ddlbgp0msh] {
+    transition: all 0.2s ease-in-out;
+}
+
+.filter-builder-panel .mud-expand-panel-header[b-ddlbgp0msh] {
+    padding: 12px 16px !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.filter-builder-panel .mud-expand-panel-header:hover[b-ddlbgp0msh] {
+    background-color: var(--mud-palette-action-hover);
+}
+
+.mud-expansion-panel-custom[b-ddlbgp0msh] {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Smooth expand/collapse animation */
+@keyframes slideDown-b-ddlbgp0msh {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mud-expand-panel-content[b-ddlbgp0msh] {
+    animation: slideDown-b-ddlbgp0msh 0.2s ease-out;
+}
+
+/* Filter row entrance animation */
+@keyframes fadeIn-b-ddlbgp0msh {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.filter-row-enter[b-ddlbgp0msh] {
+    animation: fadeIn-b-ddlbgp0msh 0.3s ease-out;
+}
+
+/* Chip animations */
+.mud-chip[b-ddlbgp0msh] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus state for accessibility */
+.mud-expand-panel:focus-within .mud-expand-panel-header[b-ddlbgp0msh] {
+    box-shadow: 0 0 0 3px rgba(var(--mud-palette-primary-rgb), 0.2);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *[b-ddlbgp0msh] {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
