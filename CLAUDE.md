@@ -109,11 +109,12 @@ Components use MudGrid with responsive column specs (e.g., `xs="12" md="4"`). Bu
 
 ## Technology Stack
 
-- **.NET 10.0 RC2** (preview version)
+- **.NET 9.0** (latest stable LTS)
 - **Blazor WebAssembly** (client-side)
 - **MudBlazor 8.13.0** (Material Design components)
 - **Gridify 2.17.0** (dynamic LINQ filtering)
-- **Microsoft.Extensions.Localization 10.0.0-rc.2** (multi-language support)
+- **Microsoft.Extensions.Localization 9.0.1** (multi-language support)
+- **Microsoft.AspNetCore.Components.Web/WebAssembly 9.0.1** (Blazor components)
 - **Blazored.LocalStorage 4.5.0** (localStorage access for Blazor)
 
 ## Important Configuration
