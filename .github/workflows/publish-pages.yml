@@ -23,12 +23,13 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '10.0.x'
+        dotnet-version: '9.0.x'
 
     - name: Install .NET WebAssembly Tools
       run: dotnet workload install wasm-tools
 
     - name: Publish with GitHub Pages Support
+      # run: dotnet publish samples/SampleApp.csproj -c:Release -o:publish -p:GHPages=true
       run: dotnet publish src/Selmir.MudGridify.Playground/Selmir.MudGridify.Playground.csproj -c:Release -o:publish -p:GHPages=true
 
     - name: Deploy to GitHub Pages
