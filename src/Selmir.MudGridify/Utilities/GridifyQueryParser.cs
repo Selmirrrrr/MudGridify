@@ -15,8 +15,8 @@ public static class GridifyQueryParser
     /// </summary>
     /// <param name="gridifyQuery">The Gridify query string (e.g., "FirstName=John,Age>30" or "Dept=Sales|Dept=Marketing")</param>
     /// <param name="filterableProperties">The list of filterable properties to match against</param>
-    /// <returns>A tuple containing the parsed conditions and whether OR operator is used</returns>
-    public static (List<FilterCondition> conditions, bool isOrOperator) Parse(
+    /// <returns>A list of parsed conditions with NextLogicalOperator set appropriately</returns>
+    public static List<FilterCondition> Parse(
         string? gridifyQuery,
         List<FilterableProperty> filterableProperties)
     {
@@ -24,26 +24,75 @@ public static class GridifyQueryParser
 
         if (string.IsNullOrWhiteSpace(gridifyQuery))
         {
-            return (conditions, false);
+            return conditions;
         }
 
-        // Detect logical operator: pipe = OR, comma = AND
-        var isOrOperator = gridifyQuery.Contains('|');
-        var separator = isOrOperator ? '|' : ',';
+        // We need to parse the query string while preserving the logical operators between conditions
+        // The query can contain mixed operators like: "Name=John,Age>30|Dept=Sales,Status=Active"
 
-        // Split into individual condition segments
-        var segments = gridifyQuery.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+        var currentPosition = 0;
+        var queryLength = gridifyQuery.Length;
 
-        foreach (var segment in segments)
+        while (currentPosition < queryLength)
         {
+            // Find the next logical operator (, or |) or end of string
+            var nextComma = gridifyQuery.IndexOf(',', currentPosition);
+            var nextPipe = gridifyQuery.IndexOf('|', currentPosition);
+
+            int segmentEnd;
+            LogicalOperator? nextOperator = null;
+
+            if (nextComma == -1 && nextPipe == -1)
+            {
+                // No more operators, this is the last segment
+                segmentEnd = queryLength;
+            }
+            else if (nextComma == -1)
+            {
+                // Only pipe found
+                segmentEnd = nextPipe;
+                nextOperator = LogicalOperator.Or;
+            }
+            else if (nextPipe == -1)
+            {
+                // Only comma found
+                segmentEnd = nextComma;
+                nextOperator = LogicalOperator.And;
+            }
+            else
+            {
+                // Both found, use the closer one
+                if (nextComma < nextPipe)
+                {
+                    segmentEnd = nextComma;
+                    nextOperator = LogicalOperator.And;
+                }
+                else
+                {
+                    segmentEnd = nextPipe;
+                    nextOperator = LogicalOperator.Or;
+                }
+            }
+
+            // Extract and parse the segment
+            var segment = gridifyQuery.Substring(currentPosition, segmentEnd - currentPosition);
             var condition = ParseCondition(segment.Trim(), filterableProperties);
+
             if (condition != null)
             {
+                // Set the NextLogicalOperator if there's another condition after this one
+                if (nextOperator.HasValue)
+                {
+                    condition.NextLogicalOperator = nextOperator.Value;
+                }
                 conditions.Add(condition);
             }
+
+            // Move to the next segment (skip the operator)
+            currentPosition = segmentEnd + 1;
         }
 
-        return (conditions, isOrOperator);
+        return conditions;
     }
 
     private static FilterCondition? ParseCondition(string segment, List<FilterableProperty> filterableProperties)
@@ -64,7 +113,7 @@ public static class GridifyQueryParser
         // Parse the condition using regex to handle all operators
         // Pattern: PropertyName + Operator + Value
         // Operators must be checked in order of longest first to avoid conflicts (e.g., != before !, >= before >)
-        var match = Regex.Match(segment, @"^([a-zA-Z_][a-zA-Z0-9_]*)(!=|!\\*|!\\^|!\\$|>=|<=|=\\*|>|<|=|\\^|\\$)(.*)$");
+        var match = Regex.Match(segment, @"^([a-zA-Z_][a-zA-Z0-9_]*)(!=|!\*|!\^|!\$|>=|<=|=\*|>|<|=|\^|\$)(.*)$");
 
         if (!match.Success)
         {

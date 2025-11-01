@@ -26,6 +26,12 @@ public class FilterCondition
     public bool CaseInsensitive { get; set; } = false;
 
     /// <summary>
+    /// The logical operator to use AFTER this condition (AND or OR).
+    /// This is only relevant if there are more conditions after this one.
+    /// </summary>
+    public LogicalOperator NextLogicalOperator { get; set; } = LogicalOperator.And;
+
+    /// <summary>
     /// Checks if the condition is valid
     /// </summary>
     public bool IsValid()

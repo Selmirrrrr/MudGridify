@@ -151,6 +151,28 @@
     </MudGrid>
 </MudPaper>
 
+@if (ShowLogicalOperator)
+{
+    <div class="d-flex align-center justify-center" style="margin: 12px 0; gap: 12px;">
+        <div style="flex: 1;">
+            <MudDivider />
+        </div>
+        <MudToggleGroup T="LogicalOperator"
+                        Value="Condition.NextLogicalOperator"
+                        ValueChanged="OnLogicalOperatorChanged"
+                        Color="Color.Primary"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small"
+                        CheckMark="false">
+            <MudToggleItem Value="LogicalOperator.And" Text="@L["FilterBuilder_LogicalAnd"]" />
+            <MudToggleItem Value="LogicalOperator.Or" Text="@L["FilterBuilder_LogicalOr"]" />
+        </MudToggleGroup>
+        <div style="flex: 1;">
+            <MudDivider />
+        </div>
+    </div>
+}
+
 
 @code {
     [Parameter]
@@ -167,6 +189,9 @@
 
     [Parameter]
     public bool CanRemove { get; set; } = true;
+
+    [Parameter]
+    public bool ShowLogicalOperator { get; set; } = false;
 
     private bool IsHovering { get; set; }
 
@@ -260,5 +285,14 @@
     private async Task OnRemove()
     {
         await OnRemoveRequested.InvokeAsync();
+    }
+
+    private async Task OnLogicalOperatorChanged(LogicalOperator logicalOp)
+    {
+        if (Condition.NextLogicalOperator != logicalOp)
+        {
+            Condition.NextLogicalOperator = logicalOp;
+            await OnConditionChanged.InvokeAsync();
+        }
     }
 }

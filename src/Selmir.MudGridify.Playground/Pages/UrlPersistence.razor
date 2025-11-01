@@ -1,6 +1,5 @@
 @page "/url-persistence"
 @inject NavigationManager Navigation
-@inject ISnackbar Snackbar
 @using System.Web
 @using Selmir.MudGridify.Utilities
 
@@ -59,12 +58,6 @@
                         <MudText Typo="Typo.body2" Style="font-family: monospace; word-break: break-all; flex: 1;">
                             @_shareableUrl
                         </MudText>
-                        <MudTooltip Text="Copy URL to clipboard">
-                            <MudIconButton Icon="@Icons.Material.Filled.ContentCopy"
-                                           Color="Color.Primary"
-                                           OnClick="CopyUrlToClipboard"
-                                           Size="Size.Small" />
-                        </MudTooltip>
                     </MudStack>
                 </MudPaper>
                 <MudText Typo="Typo.caption" Color="Color.Secondary">
@@ -180,15 +173,15 @@
     private List<FilterCondition> _initialConditions = new();
     private List<Employee> _allEmployees = new();
     private List<Employee> _filteredEmployees = new();
-    private bool _loading = false;
+    private bool _loading;
     private string _currentFilterQuery = string.Empty;
     private string _shareableUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         // Define filterable properties
-        _filterableProperties = new List<FilterableProperty>
-        {
+        _filterableProperties =
+        [
             new("FirstName", "First Name", FilterPropertyType.String),
             new("LastName", "Last Name", FilterPropertyType.String),
             new("Email", "Email", FilterPropertyType.String),
@@ -197,7 +190,7 @@
             new("Age", "Age", FilterPropertyType.Number),
             new("HireDate", "Hire Date", FilterPropertyType.Date),
             new("IsActive", "Active", FilterPropertyType.Boolean)
-        };
+        ];
 
         // Generate sample data
         _allEmployees = GenerateSampleEmployees();
@@ -214,12 +207,12 @@
             var uri = new Uri(Navigation.Uri);
             var queryString = HttpUtility.ParseQueryString(uri.Query);
             var filterParam = queryString["filter"];
-            var logicParam = queryString["logic"];
 
             if (!string.IsNullOrEmpty(filterParam))
             {
                 // Parse the Gridify query string back into FilterConditions
-                var (conditions, isOrOperator) = GridifyQueryParser.Parse(filterParam, _filterableProperties);
+                // The parser now sets the NextLogicalOperator on each condition
+                var conditions = GridifyQueryParser.Parse(filterParam, _filterableProperties);
 
                 if (conditions.Any())
                 {
@@ -231,6 +224,11 @@
                     var query = _allEmployees.AsQueryable();
                     _filteredEmployees = query.ApplyFiltering(filterParam).ToList();
                 }
+            }
+            else
+            {
+                // No filters in URL - set empty shareable URL
+                _shareableUrl = string.Empty;
             }
         }
         catch (Exception ex)
@@ -247,7 +245,7 @@
         _loading = true;
         _currentFilterQuery = filterQuery;
 
-        // Update URL with new filter query (without page reload)
+        // Update URL with new filter query (logical operator is already encoded in the query string)
         UpdateUrlWithFilter(filterQuery);
 
         await Task.Delay(100); // Simulate processing
@@ -270,46 +268,35 @@
     {
         var uri = new Uri(Navigation.Uri);
         var baseUrl = $"{uri.Scheme}://{uri.Authority}{uri.AbsolutePath}";
+        string newUrl;
 
         if (string.IsNullOrWhiteSpace(filterQuery))
         {
             // No filters - clear query parameters
+            newUrl = baseUrl;
             _shareableUrl = baseUrl;
-            Navigation.NavigateTo(baseUrl, forceLoad: false, replace: true);
         }
         else
         {
-            // Add filter as query parameter
+            // The filter query string already contains the logical operator (pipe for OR, comma for AND)
             var encodedFilter = Uri.EscapeDataString(filterQuery);
-            var newUrl = $"{baseUrl}?filter={encodedFilter}";
+            newUrl = $"{baseUrl}?filter={encodedFilter}";
             _shareableUrl = newUrl;
-            Navigation.NavigateTo(newUrl, forceLoad: false, replace: true);
         }
+
+        // Update URL without causing a full page reload in Blazor WASM
+        // forceLoad: false = no reload, replace: true = replace history entry
+        Navigation.NavigateTo(newUrl, forceLoad: false, replace: true);
     }
 
-    private async Task CopyUrlToClipboard()
-    {
-        try
-        {
-            // Use JavaScript interop to copy to clipboard
-            // Note: In a production app, you'd inject IJSRuntime and use it here
-            // For this demo, we'll just show a snackbar
-            Snackbar.Add("URL copied to clipboard! (Simulated)", Severity.Success);
-            await Task.CompletedTask;
-        }
-        catch (Exception)
-        {
-            Snackbar.Add("Failed to copy URL", Severity.Error);
-        }
-    }
-
-    private void ResetFilters()
+    private async Task ResetFilters()
     {
         _currentFilterQuery = string.Empty;
         _shareableUrl = string.Empty;
         _filteredEmployees = new List<Employee>(_allEmployees);
         UpdateUrlWithFilter(string.Empty);
         StateHasChanged();
+        await Task.CompletedTask; // Keep async for button click compatibility
     }
 
     private List<Employee> GenerateSampleEmployees()

@@ -46,32 +46,6 @@
                                    aria-label="@L["FilterBuilder_ClearAll"]">
                             @L["FilterBuilder_ClearAllShort"]
                         </MudButton>
-
-                        <MudDivider Vertical="true" FlexItem="true" Style="margin: 0 4px;" />
-
-                        <MudTooltip Text="@L["FilterBuilder_LogicalAndTooltip"]" Placement="Placement.Top">
-                            <MudToggleIconButton Icon="@Icons.Material.Filled.FilterList"
-                                                 ToggledIcon="@Icons.Material.Filled.FilterList"
-                                                 Toggled="@(!IsOrOperator)"
-                                                 ToggledChanged="@((bool val) => OnLogicalOperatorChanged(!val))"
-                                                 Color="@(!IsOrOperator ? Color.Primary : Color.Default)"
-                                                 ToggledColor="Color.Primary"
-                                                 Size="Size.Small"
-                                                 aria-label="@L["FilterBuilder_LogicalAndTooltip"]"
-                                                 aria-pressed="@(!IsOrOperator)" />
-                        </MudTooltip>
-
-                        <MudTooltip Text="@L["FilterBuilder_LogicalOrTooltip"]" Placement="Placement.Top">
-                            <MudToggleIconButton Icon="@Icons.Material.Filled.AltRoute"
-                                                 ToggledIcon="@Icons.Material.Filled.AltRoute"
-                                                 Toggled="@IsOrOperator"
-                                                 ToggledChanged="@((bool val) => OnLogicalOperatorChanged(val))"
-                                                 Color="@(IsOrOperator ? Color.Secondary : Color.Default)"
-                                                 ToggledColor="Color.Secondary"
-                                                 Size="Size.Small"
-                                                 aria-label="@L["FilterBuilder_LogicalOrTooltip"]"
-                                                 aria-pressed="@IsOrOperator" />
-                        </MudTooltip>
                     }
                 </div>
             </div>
@@ -87,32 +61,12 @@
                         var condition = Conditions[i];
                         var index = i;
 
-                        <div style="position: relative;">
-                            <FilterConditionRow Condition="@condition"
-                                                AvailableProperties="@FilterableProperties"
-                                                OnConditionChanged="@(() => OnConditionChanged())"
-                                                OnRemoveRequested="@(() => RemoveCondition(condition))"
-                                                CanRemove="@(Conditions.Count > 0)" />
-
-                            @if (i < Conditions.Count - 1)
-                            {
-                                <div class="d-flex align-center justify-center" style="margin: 4px 0; gap: 12px; min-height: 24px; width: 100%;">
-                                    <div style="flex: 1;">
-                                        <MudDivider />
-                                    </div>
-                                    <MudChip T="string"
-                                             Size="Size.Small"
-                                             Color="@(IsOrOperator ? Color.Secondary : Color.Primary)"
-                                             Variant="Variant.Text"
-                                             Style="font-weight: 600; padding: 0 4px; white-space: nowrap; flex-shrink: 0;">
-                                        @(IsOrOperator ? L["FilterBuilder_LogicalOr"] : L["FilterBuilder_LogicalAnd"])
-                                    </MudChip>
-                                    <div style="flex: 1;">
-                                        <MudDivider />
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                        <FilterConditionRow Condition="@condition"
+                                            AvailableProperties="@FilterableProperties"
+                                            OnConditionChanged="@(() => OnConditionChanged())"
+                                            OnRemoveRequested="@(() => RemoveCondition(condition))"
+                                            CanRemove="@(Conditions.Count > 0)"
+                                            ShowLogicalOperator="@(i < Conditions.Count - 1)" />
                     }
                 </MudStack>
             }
@@ -133,6 +87,7 @@
     [Parameter]
     public List<FilterCondition> InitialConditions { get; set; } = new();
 
+
     /// <summary>
     /// Whether to show the generated Gridify query string
     /// </summary>
@@ -149,11 +104,6 @@
     /// The current list of filter conditions
     /// </summary>
     public List<FilterCondition> Conditions { get; private set; } = new();
-
-    /// <summary>
-    /// The logical operator between conditions (false = AND, true = OR)
-    /// </summary>
-    private bool IsOrOperator { get; set; }
 
     /// <summary>
     /// Whether the filter conditions are expanded or collapsed
@@ -219,33 +169,45 @@
         UpdateGeneratedQuery();
     }
 
-    private void OnLogicalOperatorChanged(bool isOr)
-    {
-        IsOrOperator = isOr;
-        UpdateGeneratedQuery();
-    }
-
     private void UpdateGeneratedQuery()
     {
-        var validConditions = Conditions
-            .Where(c => c.IsValid())
-            .Select(c => c.ToGridifyString())
-            .Where(s => !string.IsNullOrWhiteSpace(s))
-            .ToList();
+        var queryParts = new List<string>();
 
-        if (!validConditions.Any())
+        for (int i = 0; i < Conditions.Count; i++)
         {
-            GeneratedQuery = string.Empty;
+            var condition = Conditions[i];
+            if (!condition.IsValid())
+                continue;
+
+            var conditionString = condition.ToGridifyString();
+            if (string.IsNullOrWhiteSpace(conditionString))
+                continue;
+
+            queryParts.Add(conditionString);
+
+            // Add the logical operator if this is not the last valid condition
+            if (i < Conditions.Count - 1)
+            {
+                // Check if there are more valid conditions after this one
+                bool hasMoreValidConditions = false;
+                for (int j = i + 1; j < Conditions.Count; j++)
+                {
+                    if (Conditions[j].IsValid())
+                    {
+                        hasMoreValidConditions = true;
+                        break;
+                    }
+                }
+
+                if (hasMoreValidConditions)
+                {
+                    // Use the NextLogicalOperator from the current condition
+                    queryParts.Add(condition.NextLogicalOperator.ToGridifyOperator());
+                }
+            }
         }
-        else if (validConditions.Count == 1)
-        {
-            GeneratedQuery = validConditions[0];
-        }
-        else
-        {
-            var separator = IsOrOperator ? "|" : ",";
-            GeneratedQuery = string.Join(separator, validConditions);
-        }
+
+        GeneratedQuery = string.Join("", queryParts);
 
         // Notify parent component
         OnFilterChanged.InvokeAsync(GeneratedQuery);
